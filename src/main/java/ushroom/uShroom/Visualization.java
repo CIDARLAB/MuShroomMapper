@@ -5,13 +5,14 @@
  */
 package ushroom.uShroom;
 
+import com.mxgraph.layout.mxCircleLayout;
+import com.mxgraph.swing.mxGraphComponent;
 import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
-import org.jgraph.JGraph;
 import org.jgrapht.DirectedGraph;
-import org.jgrapht.ext.JGraphModelAdapter;
+import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DefaultEdge;
 
 
@@ -23,14 +24,14 @@ public class Visualization extends JApplet{
     private static final Color DEFAULT_BG_COLOR = Color.decode("#FAFBFF");
     private static final Dimension DEFAULT_SIZE = new Dimension(530, 320);
     
-    private JGraphModelAdapter<String, DefaultEdge> jgAdapter;
+    private JGraphXAdapter<String, DefaultEdge> jgxAdapter;
     
     public void display(DirectedGraph g){
         init(g);
         
         JFrame frame = new JFrame();
         frame.getContentPane().add(this);
-        frame.setTitle("JGraphT Adapter to JGraph Demo");
+        frame.setTitle("JGraphT Adapter to JGraph");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
@@ -39,32 +40,14 @@ public class Visualization extends JApplet{
     
     public void init(DirectedGraph g){
         // create a visualization using JGraph, via an adapter
-        jgAdapter = new JGraphModelAdapter<>(g);
+        jgxAdapter = new JGraphXAdapter<>(g);
         
-        JGraph jgraph = new JGraph(jgAdapter);
 
-        adjustDisplaySettings(jgraph);
-        getContentPane().add(jgraph);
+        getContentPane().add(new mxGraphComponent(jgxAdapter));
         resize(DEFAULT_SIZE);
-    }
-
-    
-    private void adjustDisplaySettings(JGraph jg)
-    {
-        jg.setPreferredSize(DEFAULT_SIZE);
-
-        Color c = DEFAULT_BG_COLOR;
-        String colorStr = null;
-
-        try {
-            colorStr = getParameter("bgcolor");
-        } catch (Exception e) {
-        }
-
-        if (colorStr != null) {
-            c = Color.decode(colorStr);
-        }
-
-        jg.setBackground(c);
+        
+        // positioning via jgraphx layouts
+        mxCircleLayout layout = new mxCircleLayout(jgxAdapter);
+        layout.execute(jgxAdapter.getDefaultParent());
     }
 }
