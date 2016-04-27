@@ -5,6 +5,10 @@
  */
 package ushroom.uShroom;
 
+import java.io.File;
+import org.cellocad.BU.fluigi.VerilogFluigiGrammar;
+import org.cellocad.BU.fluigi.VerilogFluigiWalker;
+import org.cellocad.BU.netsynth.Utilities;
 import org.jgrapht.DirectedGraph;
 
 
@@ -21,6 +25,12 @@ public class main {
     public static void main(String[] args) {
         
         //TODO: Create JGraphT from Prashant Graph
+        String filepath = "fluigi.v";   
+        String line = "";        
+        line = Utilities.getFileContentAsString(filepath);
+        //System.out.println("FILE LINE :: \n" + fileLine);
+        VerilogFluigiWalker walker = VerilogFluigiGrammar.getuFWalker(line);
+                
         // create a JGraphT graph
         DirectedGraph g = GraphTranslation.generateDefault();
         // create a visualization using JGraph, via an adapter
