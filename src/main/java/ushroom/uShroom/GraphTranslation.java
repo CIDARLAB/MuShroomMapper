@@ -23,17 +23,9 @@ import org.jgrapht.graph.DefaultEdge;
 public class GraphTranslation{
     public mxGraph jgraphx = new mxGraph();
     
-    public GraphTranslation(netListTransition net){
+    GraphTranslation(netListTransition net, ParsedUCF ucf) {
+        //TODO Create mxGraph 
         
-        
-    }   
-    
-    public static DirectedGraph generateGraph(){
-        // create a JGraphT graph
-        DirectedGraph g = new DefaultDirectedGraph( DefaultEdge.class );
-
-        
-        return g;
     }
     
     public static DirectedGraph generateDefault(){
@@ -72,11 +64,5 @@ public class GraphTranslation{
         g.addEdge(imgd, imgc);        
         
         return g;
-    }
-    public mxGraph generateJGraphX(){
-        mxGraph g = new mxGraph();
-        
-        
-        return g;        
     }
 }

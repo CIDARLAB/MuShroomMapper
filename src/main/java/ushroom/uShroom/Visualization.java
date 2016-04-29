@@ -53,7 +53,7 @@ public class Visualization extends JApplet{
         stylesheet.putCellStyle( styleName, style);
 
         Object v1 = jgxAdapter.insertVertex(jgxAdapter.getDefaultParent(), null, "Vertex 1", 0, 0, 80, 30, styleName);
-        jgxAdapter.setCellStyle(styleName, jgxAdapter.);
+        //jgxAdapter.setCellStyle(styleName, jgxAdapter.);
         
         getContentPane().add(new mxGraphComponent(jgxAdapter));
         resize(DEFAULT_SIZE);
