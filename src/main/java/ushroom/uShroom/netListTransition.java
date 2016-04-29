@@ -7,6 +7,7 @@ package ushroom.uShroom;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import org.cellocad.BU.dom.DGate;
 import org.cellocad.BU.dom.DWire;
 import org.cellocad.BU.fluigi.VerilogFluigiGrammar;
@@ -31,7 +32,9 @@ public class netListTransition {
     
     
     public netListTransition(){
-        filepath = Utilities.getNetSynthResourcesFilepath()+"fluigi.v"; //change filepath to suit our needs
+        Scanner reader = new Scanner(System.in);  // Reading from System.in
+        System.out.println("Enter path to Verilog file: ");
+        String filepath = reader.nextLine(); // Scans the next token of the input as an int.
         line = "";
         line = Utilities.getFileContentAsString(filepath);
         walker = VerilogFluigiGrammar.getuFWalker(line);
@@ -45,6 +48,7 @@ public class netListTransition {
         }
         //list of gates
         gates = walker.netlist;
+        parseNetList();
     }
     public void parseNetList(){
 
@@ -55,7 +59,7 @@ public class netListTransition {
                 else for(DWire input:gate.input){
                     if(wire.name.equals(input.name)) wire.setDestination(gate);
                 }
-        }
+            }
+        }      
     }
-}
 }
