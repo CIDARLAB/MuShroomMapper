@@ -11,6 +11,5 @@ package ushroom.uShroom;
  */
 public class ErrorChecker {
     
-    public 
     
 }

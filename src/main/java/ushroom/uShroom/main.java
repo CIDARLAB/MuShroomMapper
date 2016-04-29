@@ -5,9 +5,7 @@
  */
 package ushroom.uShroom;
 
-import com.mxgraph.view.mxGraph;
-import org.cellocad.BU.fluigi.VerilogFluigiGrammar;
-import org.cellocad.BU.fluigi.VerilogFluigiWalker;
+import java.io.IOException;
 import org.cellocad.BU.netsynth.Utilities;
 import org.jgrapht.DirectedGraph;
 
@@ -21,8 +19,9 @@ public class main {
 
     /**
      * @param args the command line arguments
+     * @throws java.io.IOException
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         //TODO: Take in user input on verilog and ucf 
         
         //TODO: Read in verilog file, run with Prashant's code   
@@ -37,6 +36,8 @@ public class main {
         //Read in ucf
         System.out.println("Reading UCF...");
         ParsedUCF ucf = new ParsedUCF("simpleucf.ucf");
+        System.out.println(ucf.operators);
+
         
         
         //TODO: Create JGraphX from netlist Graph while error checking
@@ -51,7 +52,6 @@ public class main {
         
         // create a visualization using JGraph, via an adapter
         Visualization v = new Visualization();
-        
         v.display(g);
         
         //Create Mint file from netlist graph and parsed ucf
