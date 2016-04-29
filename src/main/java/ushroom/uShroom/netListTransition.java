@@ -18,6 +18,7 @@ import org.cellocad.BU.netsynth.Utilities;
 /**
  *
  * @author Riastradh
+ * creates our graph object from the output of netlist
  */
 public class netListTransition {
     public String filepath;
@@ -50,10 +51,11 @@ public class netListTransition {
         //filling out Wire objects
         for(Wire wire:wires){
             for(DGate gate:gates){
-                if(wire.name == gate.output.name) wire.setOrigin(gate);
+                if(wire.name.equals(gate.output.name)) wire.setOrigin(gate);
                 else for(DWire input:gate.input){
-                    if(wire.name==input.name) wire.setDestination(gate);
+                    if(wire.name.equals(input.name)) wire.setDestination(gate);
                 }
         }
     }
+}
 }
