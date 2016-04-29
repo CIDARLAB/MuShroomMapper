@@ -29,19 +29,23 @@ public class main {
         String line = "";
         line = Utilities.getFileContentAsString(filepath);
         
-        //Read in verilog file, run with Prashant's code  
-        netListTransition net = new netListTransition();
+        //Read in verilog file, run with Prashant's code, create informative graph obj 
+        System.out.println("Reading Verilog...");
+        netListTransition nlt = new netListTransition();
         
         //Read in ucf
+        System.out.println("Reading UCF...");
         ParsedUCF ucf = new ParsedUCF("simpleucf.ucf");
         System.out.println(ucf.operators);
 
         
-        //TODO: Create JGraphX from Prashant Graph while error checking
-        GraphTranslation gt = new GraphTranslation(net, ucf);
+        //TODO: Create JGraphX from netlist Graph while error checking
+        System.out.println("Creating JGraphX, error checking...");
+        GraphTranslation gt = new GraphTranslation(net);
 
         
         // create a JGraphT graph
+        // ?
         DirectedGraph g = GraphTranslation.generateDefault();
         
         
@@ -49,7 +53,12 @@ public class main {
         Visualization v = new Visualization();
         v.display(g);
         
-        //TODO: Submit to Mint 
+        //Create Mint file from netlist graph and parsed ucf
+        System.out.println("Creating Mint file output...");
+        CreateMint cm = new CreateMint(nlt, ucf);
+        
+        System.out.println("All done!");
+        
     }
     
 }
