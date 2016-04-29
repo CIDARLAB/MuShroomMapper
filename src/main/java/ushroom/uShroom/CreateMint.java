@@ -25,7 +25,7 @@ public class CreateMint {
     List<String> channelList;
     
     
-    public void CreateMint(netListTransition modifiedGraph, ParsedUCF ucf) throws FileNotFoundException, UnsupportedEncodingException{    //are these throws necessary?
+    public CreateMint(netListTransition modifiedGraph, ParsedUCF ucf){    //are these throws necessary?
         Scanner ufNameInput = new Scanner(System.in);  // Reading from System.in
         System.out.println("What would you like to name your .uf file? ");
         fileName = ufNameInput.nextLine(); // Scans the next token of the input as an int.

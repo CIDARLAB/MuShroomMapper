@@ -34,7 +34,7 @@ public class netListTransition {
     public netListTransition(){
         Scanner reader = new Scanner(System.in);  // Reading from System.in
         System.out.println("Enter path to Verilog file: ");
-        String filepath = reader.nextLine(); // Scans the next token of the input as an int.
+        String filepath = reader.nextLine(); // reads in filepath
         line = "";
         line = Utilities.getFileContentAsString(filepath);
         walker = VerilogFluigiGrammar.getuFWalker(line);
