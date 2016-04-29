@@ -21,8 +21,11 @@ import org.jgrapht.graph.DefaultEdge;
  * @author Riastradh
  */
 public class GraphTranslation{
+    public mxGraph jgraphx = new mxGraph();
     
-    private GraphTranslation(){
+    public GraphTranslation(netListTransition net){
+        
+        
     }   
     
     public static DirectedGraph generateGraph(){
