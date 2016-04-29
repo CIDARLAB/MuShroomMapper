@@ -39,6 +39,7 @@ public class main {
         System.out.println(ucf.operators);
 
         
+        
         //TODO: Create JGraphX from netlist Graph while error checking
         System.out.println("Creating JGraphX, error checking...");
         GraphTranslation gt = new GraphTranslation(net);
