@@ -72,14 +72,14 @@ public class GraphTranslation{
                 }
                 for(GatePrimitive prim : ucf.primitives){
                     if(d.symbol.equals(prim.operator)){
-                        /*
+                        
                         //check that number of inputs match and only 1 output
                         if(d.input.size() != prim.inputs){
                             throw new ShroomException("DGate "+d.gname+" has incorrect number of inputs");
                         } else if (prim.outputs != 1){
                             throw new ShroomException("DGate "+d.gname+" has incorrect number of outputs");
                         }
-                                */
+                                
                         //add the primitave as the muGate's primitive
                         d.addPrimitive(prim);
                     }
