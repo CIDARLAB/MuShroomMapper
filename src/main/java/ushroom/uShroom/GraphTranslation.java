@@ -5,27 +5,82 @@
  */
 package ushroom.uShroom;
 
+import com.mxgraph.model.mxCell;
+import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraph;
+import com.mxgraph.view.mxStylesheet;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import org.cellocad.BU.dom.DGate;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
 /**
  *
- * @author Riastradh
+ * @author Everett
  */
 public class GraphTranslation{
     public mxGraph jgraphx = new mxGraph();
+    mxStylesheet styleSheet = jgraphx.getStylesheet();
+    Object parent = jgraphx.getDefaultParent();
+    List<Object> vertices = new ArrayList<Object>();
+
     
-    GraphTranslation(netListTransition net, ParsedUCF ucf) {
-        //TODO Create mxGraph 
+    
+    GraphTranslation(netListTransition net, ParsedUCF ucf) throws ShroomException{
+        //Error checking!!
+        checkForErrors(net, ucf);
         
+        //Create styles for each operator type 
+        jgraphx.getModel().beginUpdate();
+        generateJGraphX(net, ucf);
+        jgraphx.getModel().endUpdate();
+    }
+    
+    private void generateJGraphX(netListTransition net, ParsedUCF ucf){
+        //create sytles
+        generateStyles(ucf);
+        for( muGate d : net.gates ){
+            vertices.add(d.gindex, jgraphx.insertVertex(parent, Integer.toString(d.gindex), d.gindex, 0, 0, 80, 30, "style_"+d.symbol));
+        }
+        
+        for ( Wire w : net.wires){
+            Object inVert = vertices.get(w.fromGate.gindex);
+            Object outVert = vertices.get(w.toGate.gindex);
+            jgraphx.insertEdge(parent, null, "", inVert, outVert);
+        }
+    }
+    
+    private void checkForErrors(netListTransition net, ParsedUCF ucf) throws ShroomException{
+        for( muGate d : net.gates ){
+            //Check if all operators occuring in netlist are in ucf
+            if(!(ucf.operators.contains(d.symbol))){
+                //if not
+                throw new ShroomException("Dgate operator "+d.symbol+" not found in UCF");
+            }
+            for(GatePrimitive prim : ucf.primitives){
+                if(d.symbol.equals(prim.operator)){
+                    /*
+                    //check that number of inputs match and only 1 output
+                    if(d.input.size() != prim.inputs){
+                        throw new ShroomException("DGate "+d.gname+" has incorrect number of inputs");
+                    } else if (prim.outputs != 1){
+                        throw new ShroomException("DGate "+d.gname+" has incorrect number of outputs");
+                    }
+                            */
+                    //add the primitave as the muGate's primitive
+                    d.addPrimitive(prim);
+                }
+            }
+        }        
     }
     
     public static DirectedGraph generateDefault(){
@@ -64,5 +119,16 @@ public class GraphTranslation{
         g.addEdge(imgd, imgc);        
         
         return g;
+    }
+
+    private void generateStyles(ParsedUCF ucf) {
+         for( GatePrimitive p : ucf.primitives ){
+            String styleName = "style_"+p.operator;
+            Hashtable<String, Object> style = new Hashtable<String, Object>();
+            style.put( mxConstants.STYLE_SHAPE, mxConstants.SHAPE_IMAGE);
+            style.put( mxConstants.STYLE_IMAGE, p.picturePath);
+            style.put( mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_BOTTOM);
+            styleSheet.putCellStyle(styleName, style);  
+         }
     }
 }

@@ -13,15 +13,15 @@ import org.cellocad.BU.dom.DGate;
  */
 public class Wire {
     public String name;
-    public DGate fromGate;
-    public DGate toGate;
+    public muGate fromGate;
+    public muGate toGate;
     public Wire(String wireName){
         name=wireName;
     }
-    public void setOrigin(DGate originGate){
+    public void setOrigin(muGate originGate){
         fromGate = originGate;
     }
-    public void setDestination(DGate destGate){
+    public void setDestination(muGate destGate){
         toGate = destGate;
     }
 }
