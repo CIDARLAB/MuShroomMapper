@@ -61,6 +61,7 @@ public class GraphTranslation{
     
     private void checkForErrors(netListTransition net, ParsedUCF ucf) throws ShroomException{
         for( muGate d : net.gates ){
+            //TODO: Skip input and piutput gates 
             //Check if all operators occuring in netlist are in ucf
             if(!(ucf.operators.contains(d.symbol))){
                 //if not
