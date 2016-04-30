@@ -50,7 +50,8 @@ public class netListTransition {
         }
         for(String wireName:walker.details.inputs){
             muGate in = new muGate("input", wireName);
-            wires.add(new Wire(wireName, 0, in));
+            Wire w = new Wire(wireName, 0, in);
+            wires.add(w);
             gates.add(in);
             in.gindex = gateCount;
             gateCount++;

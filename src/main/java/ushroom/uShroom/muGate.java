@@ -20,6 +20,7 @@ public class muGate extends DGate{
     public muGate(String type, String wireName){
         this.type = type;
         this.ioWire = wireName;
+        this.symbol = "0";
     }
     public muGate(DGate dg, String type){
         symbol = dg.symbol;

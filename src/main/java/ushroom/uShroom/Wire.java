@@ -23,11 +23,11 @@ public class Wire {
     }
     public Wire(String wireName, int io, muGate ioGate){
         if (io == 0) {
-            toGate = ioGate;
+            fromGate = ioGate;
             type = "input";
         }
         else{
-            fromGate = ioGate;
+            toGate = ioGate;
             type = "output";
         }
         name=wireName;
