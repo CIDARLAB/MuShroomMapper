@@ -26,7 +26,19 @@ public class CreateMint {
     
     
     public CreateMint(netListTransition modifiedGraph, ParsedUCF ucf){    //are these throws necessary?
-        Scanner ufNameInput = new Scanner(System.in);  // Reading from System.in
+        System.out.println("What would you like to name your .uf file? ");
+        fileName = ufNameInput.nextLine(); // Scans the next token of the input as an int.
+        PrintWriter mintWriter = new PrintWriter(fileName, "UTF-8");
+        mintWriter.println("# .uf output by muShroomMapper");
+        mintWriter.println("DEVICE testDevice");
+        mintWriter.println("");
+        mintWriter.println("LAYER FLOW");
+        mintWriter.println("");
+        mintWriter.println("PORT " + flowPorts + ";");
+        //print gates
+        //print channels connecting
+        mintWriter.println("END LAYER");
+        mintWriter.println("LAYER CONTROL    Scanner ufNameInput = new Scanner(System.in);  // Reading from System.in
         System.out.println("What would you like to name your .uf file? ");
         fileName = ufNameInput.nextLine(); // Scans the next token of the input as an int.
         PrintWriter mintWriter = new PrintWriter(fileName, "UTF-8");

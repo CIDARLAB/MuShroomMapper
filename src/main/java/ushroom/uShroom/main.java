@@ -23,11 +23,7 @@ public class main {
      */
     public static void main(String[] args) throws IOException {
         //TODO: Take in user input on verilog and ucf 
-        
-        //TODO: Read in verilog file, run with Prashant's code   
-        String filepath = "fluigi.v";   
-        String line = "";
-        line = Utilities.getFileContentAsString(filepath);
+       
         
         //Read in verilog file, run with Prashant's code, create informative graph obj 
         System.out.println("Reading Verilog...");
@@ -37,19 +33,14 @@ public class main {
         System.out.println("Reading UCF...");
         ParsedUCF ucf = new ParsedUCF("simpleucf.ucf");
         System.out.println(ucf.operators);
-
-        
         
         //TODO: Create JGraphX from netlist Graph while error checking
         System.out.println("Creating JGraphX, error checking...");
-        GraphTranslation gt = new GraphTranslation(net);
-
+        GraphTranslation gt = new GraphTranslation(nlt, ucf);
         
-        // create a JGraphT graph
-        // ?
+        // create a JGraphX graph
         DirectedGraph g = GraphTranslation.generateDefault();
-        
-        
+               
         // create a visualization using JGraph, via an adapter
         Visualization v = new Visualization();
         v.display(g);

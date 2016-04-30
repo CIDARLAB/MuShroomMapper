@@ -36,7 +36,7 @@ public class netListTransition {
         System.out.println("Enter path to Verilog file: ");
         String filepath = reader.nextLine(); // reads in filepath
         line = "";
-        line = Utilities.getFileContentAsString(filepath);
+        line = Utilities.getFileContentAsString(filepath);      //check path rules
         walker = VerilogFluigiGrammar.getuFWalker(line);
         //create list of in ports from inputList command
         inPorts = walker.details.inputs;
