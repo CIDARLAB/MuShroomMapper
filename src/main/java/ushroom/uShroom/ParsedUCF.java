@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  * @author Everett
  */
 public class ParsedUCF {
-    public List<GatePrimitive> gates;
+    public List<GatePrimitive> primitives;
     public List<String> operators;
     
     ParsedUCF(String filepath) throws FileNotFoundException, IOException{
@@ -81,7 +81,7 @@ public class ParsedUCF {
                         mintSyntax = mintMatch.group(1);
                     }               
                 }
-                gates.add(new GatePrimitive(inputs, outputs, 
+                primitives.add(new GatePrimitive(inputs, outputs, 
                         op, picPath, mintSyntax));
             }                
         }catch (IOException ex){
