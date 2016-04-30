@@ -56,15 +56,31 @@ public class ParsedUCF {
                 String picPath = null;
                 String op = operator1;
                 String mintSyntax = null;
-                Pattern in = Pattern.compile("["+op+"]in["+op+"]\\s+([0-9]+)");
+                
+                String str = "["+op+"]in["+op+"]\\s+([0-9]+)";
+                System.out.println(str);
+                Pattern in = Pattern.compile(str);
                 Matcher inMatch = in.matcher("");
-                Pattern out = Pattern.compile("["+op+"]out["+op+"]\\s+([0-9]+)");
+                
+                str = "["+op+"]out["+op+"]\\s+([0-9]+)";
+                System.out.println(str);
+                Pattern out = Pattern.compile(str);
                 Matcher outMatch = out.matcher("");
-                Pattern pic = Pattern.compile("["+op+"]pic["+op+"]\\s+(\\S+)");
+                
+                str = "["+op+"]pic["+op+"]\\s+(\\S+)";
+                System.out.println(str);
+                Pattern pic = Pattern.compile(str);
                 Matcher picMatch = pic.matcher("");
-                Pattern mint = Pattern.compile("["+op+"]mint["+op+"]\\s+(.+)");
+                
+                str = "["+op+"]mint["+op+"]\\s+(.+)";
+                System.out.println(str);
+                Pattern mint = Pattern.compile(str);
                 Matcher mintMatch = mint.matcher("");
-                while ((line = lineReader.readLine()) != null) {
+                
+                BufferedReader reader1 = Files.newBufferedReader(path);
+                LineNumberReader lineReader1 = new LineNumberReader(reader1);
+                
+                while ((line = lineReader1.readLine()) != null) {
                     inMatch.reset(line);
                     outMatch.reset(line);
                     picMatch.reset(line);
@@ -82,6 +98,7 @@ public class ParsedUCF {
                         mintSyntax = mintMatch.group(1);
                     }               
                 }
+                System.out.println("op is equal to:"+op);
                 primitives.add(new GatePrimitive(inputs, outputs, 
                         op, picPath, mintSyntax));
             }                

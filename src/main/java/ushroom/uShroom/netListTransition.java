@@ -48,16 +48,21 @@ public class netListTransition {
             System.out.println(wireName);
         }
         //list of gates
+        int gateCount=0;
         for(DGate dg:walker.netlist)
         {
             gates.add(new muGate(dg));
+            gates.get(gateCount).gindex = gateCount;
+            gateCount++;
         }
         parseNetList();
         for (muGate mg:gates){
             for(GatePrimitive gp:ucf.primitives)
             {
-                if(mg.symbol == gp.operator){
+                System.out.println("gate symbol:"+mg.symbol+" prim operator:"+gp.operator);
+                if(mg.symbol.equals(gp.operator)){
                     mg.addPrimitive(gp);
+                    System.out.println("Primitive added!");
                     continue;
                 }
             }

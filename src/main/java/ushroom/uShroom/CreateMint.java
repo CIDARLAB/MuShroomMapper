@@ -25,7 +25,7 @@ public class CreateMint {
     List<String> channelList;
     
     
-    public CreateMint(netListTransition modifiedGraph, ParsedUCF ucf) throws UnsupportedEncodingException, FileNotFoundException{    //are these throws necessary?
+    public CreateMint(netListTransition graph, ParsedUCF ucf) throws UnsupportedEncodingException, FileNotFoundException{    //are these throws necessary?
         Scanner ufNameInput = new Scanner(System.in);  // Reading from System.in
         System.out.println("What would you like to name your .uf file? ");
         fileName = ufNameInput.nextLine(); // Scans the next token of the input as an int.
@@ -35,9 +35,28 @@ public class CreateMint {
         mintWriter.println("");
         mintWriter.println("LAYER FLOW");
         mintWriter.println("");
-        mintWriter.println("PORT " + flowPorts + ";");
+        int inPortCount = 1;
+        int outPortCount = 1;
+        //adding inports
+        for(String port:graph.inPorts){
+            flowPorts+="inPort"+inPortCount+",";
+            inPortCount++;
+        }
+        //adding outports
+        for (String port:graph.outPorts){
+            flowPorts+="outPort"+outPortCount;
+            if (outPortCount == graph.outPorts.size()) flowPorts+=";";
+            else flowPorts+=",";
+            outPortCount++;
+        }
+        mintWriter.println("PORT " + flowPorts);
         //print gates
+        for (muGate mg:graph.gates){
+            System.out.println(mg.primitive.mintSyntax);
+            mintWriter.println(mg.primitive.mintSyntax);
+        }
         //print channels connecting
+        //for ()
         mintWriter.println("END LAYER");
         mintWriter.println("LAYER CONTROL");
         mintWriter.println("END LAYER");

@@ -13,7 +13,7 @@ public class GatePrimitive {
     public int inputs, outputs;
     public String picturePath, operator, mintSyntax;
     
-    public GatePrimitive(int inputs, int outputs, String picturePath, String operator, String mintSyntax){
+    public GatePrimitive(int inputs, int outputs, String operator, String picturePath, String mintSyntax){
         this.inputs = inputs;
         this.outputs = outputs;
         this.picturePath = picturePath;

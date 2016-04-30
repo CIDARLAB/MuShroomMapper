@@ -25,6 +25,6 @@ public class muGate extends DGate{
     }
     
     public void addPrimitive(GatePrimitive prim){
-        this.primitive = prim;
+        primitive = prim;
     }
 }
