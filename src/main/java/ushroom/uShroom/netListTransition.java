@@ -25,13 +25,13 @@ public class netListTransition {
     public String filepath;
     public String line;
     VerilogFluigiWalker walker;
-    public List<String> inPorts;
-    public List<String> outPorts;
-    public List<Wire> wires;
-    public List<DGate> gates;
+    public List<String> inPorts = new ArrayList<String>();
+    public List<String> outPorts = new ArrayList<String>();
+    public List<Wire> wires = new ArrayList<Wire>();
+    public List<muGate> gates = new ArrayList<muGate>();
     
     
-    public netListTransition(){
+    public netListTransition(ParsedUCF ucf){
         Scanner reader = new Scanner(System.in);  // Reading from System.in
         System.out.println("Enter path to Verilog file: ");
         String filepath = reader.nextLine(); // reads in filepath
@@ -45,16 +45,29 @@ public class netListTransition {
         //create list of channels from wiresList command
         for(String wireName:walker.details.wires){
             wires.add(new Wire(wireName));
+            System.out.println(wireName);
         }
         //list of gates
-        gates = walker.netlist;
+        for(DGate dg:walker.netlist)
+        {
+            gates.add(new muGate(dg));
+        }
         parseNetList();
+        for (muGate mg:gates){
+            for(GatePrimitive gp:ucf.primitives)
+            {
+                if(mg.symbol == gp.operator){
+                    mg.addPrimitive(gp);
+                    continue;
+                }
+            }
+        }
     }
     public void parseNetList(){
 
         //filling out Wire objects
         for(Wire wire:wires){
-            for(DGate gate:gates){
+            for(muGate gate:gates){
                 if(wire.name.equals(gate.output.name)) wire.setOrigin(gate);
                 else for(DWire input:gate.input){
                     if(wire.name.equals(input.name)) wire.setDestination(gate);

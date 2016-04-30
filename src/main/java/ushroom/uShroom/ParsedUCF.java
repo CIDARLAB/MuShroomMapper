@@ -13,6 +13,7 @@ import java.io.LineNumberReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,8 +23,8 @@ import java.util.regex.Pattern;
  * @author Everett
  */
 public class ParsedUCF {
-    public List<GatePrimitive> primitives;
-    public List<String> operators;
+    public List<GatePrimitive> primitives = new ArrayList<GatePrimitive>();
+    public List<String> operators = new ArrayList<String>();
     
     ParsedUCF(String filepath) throws FileNotFoundException, IOException{
         

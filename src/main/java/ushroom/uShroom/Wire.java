@@ -16,12 +16,12 @@ public class Wire {
     public DGate fromGate;
     public DGate toGate;
     public Wire(String wireName){
-        this.name=wireName;
+        name=wireName;
     }
     public void setOrigin(DGate originGate){
-        this.fromGate = originGate;
+        fromGate = originGate;
     }
     public void setDestination(DGate destGate){
-        this.toGate = destGate;
+        toGate = destGate;
     }
 }
