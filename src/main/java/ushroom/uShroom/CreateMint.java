@@ -51,9 +51,13 @@ public class CreateMint {
         }
         mintWriter.println("PORT " + flowPorts);
         //print gates
+        int deviceCount = 0;
         for (muGate mg:graph.gates){
-            System.out.println(mg.primitive.mintSyntax);
-            mintWriter.println(mg.primitive.mintSyntax);
+            String mint = mg.primitive.mintSyntax;
+            mint = mint.replaceAll("NAME", "Device"+deviceCount);
+            //System.out.println(mg.primitive.mintSyntax);
+            mintWriter.println(mint);
+            deviceCount++;
         }
         //print channels connecting
         //for ()
@@ -61,13 +65,6 @@ public class CreateMint {
         mintWriter.println("LAYER CONTROL");
         mintWriter.println("END LAYER");
         mintWriter.close();
-    }
-    
-    public String getUCFMint(char op, String ucfFileName){
-     //open file(ucfFileName)
-     //search for op+"mint"+op
-     String mintCode = "a"; //where a is the regexed line after op+mint+op
-     return mintCode;        
     }
 
     public void createChannel(String netList, String wireName){

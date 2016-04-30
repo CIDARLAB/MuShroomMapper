@@ -43,19 +43,41 @@ public class netListTransition {
         //create list of out ports from outputList command
         outPorts = walker.details.outputs;
         //create list of channels from wiresList command
+        int gateCount=0;
         for(String wireName:walker.details.wires){
             wires.add(new Wire(wireName));
             System.out.println(wireName);
         }
-        //list of gates
-        int gateCount=0;
+        for(String wireName:walker.details.inputs){
+            muGate in = new muGate("input", wireName);
+            wires.add(new Wire(wireName, 0, in));
+            gates.add(in);
+            in.gindex = gateCount;
+            gateCount++;
+            //System.out.println(wireName);
+        }
         for(DGate dg:walker.netlist)
         {
-            gates.add(new muGate(dg));
+            gates.add(new muGate(dg, "gate"));
             gates.get(gateCount).gindex = gateCount;
             gateCount++;
         }
+        for(String wireName:walker.details.outputs){
+            muGate out = new muGate("output", wireName);
+            wires.add(new Wire(wireName, 1 , out));
+            gates.add(out);
+            out.gindex = gateCount;
+            gateCount++;
+        }
+
+        //list of gates
+        
+        for (String in:walker.details.inputs){
+            
+        }
+
         parseNetList();
+      
         for (muGate mg:gates){
             for(GatePrimitive gp:ucf.primitives)
             {
@@ -73,9 +95,19 @@ public class netListTransition {
         //filling out Wire objects
         for(Wire wire:wires){
             for(muGate gate:gates){
+                if ("input".equals(wire.type)){
+                    for(DWire input:gate.input){
+                        if(wire.name.equals(input.name)) wire.setDestination(gate);
+                    }
+                }
+                else if("output".equals(wire.type)){
+                    if(wire.name.equals(gate.output.name)) wire.setOrigin(gate);
+                }
+                else{  
                 if(wire.name.equals(gate.output.name)) wire.setOrigin(gate);
                 else for(DWire input:gate.input){
                     if(wire.name.equals(input.name)) wire.setDestination(gate);
+                }
                 }
             }
         }      

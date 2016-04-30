@@ -13,8 +13,15 @@ import org.cellocad.BU.dom.DGate;
  */
 public class muGate extends DGate{
     public GatePrimitive primitive;
+    public String type;
+    public String ioWire;
+    public int io;
     
-    public muGate(DGate dg){
+    public muGate(String type, String wireName){
+        this.type = type;
+        this.ioWire = wireName;
+    }
+    public muGate(DGate dg, String type){
         symbol = dg.symbol;
         output = dg.output;
         input = dg.input;
@@ -22,6 +29,7 @@ public class muGate extends DGate{
         gindex = dg.gindex;
         gatestage = dg.gatestage;
         picpath = dg.picpath;
+        this.type=type;
     }
     
     public void addPrimitive(GatePrimitive prim){
