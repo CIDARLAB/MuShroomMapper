@@ -25,7 +25,7 @@ public class CreateMint {
     List<String> channelList;
     
     
-    public CreateMint(netListTransition graph, ParsedUCF ucf) throws UnsupportedEncodingException, FileNotFoundException{    //are these throws necessary?
+    public CreateMint(netListTransition graph, ParsedUCF ucf) throws UnsupportedEncodingException, FileNotFoundException{
         Scanner ufNameInput = new Scanner(System.in);  // Reading from System.in
         System.out.println("What would you like to name your .uf file? ");
         fileName = ufNameInput.nextLine(); // Scans the next token of the input as an int.
@@ -35,29 +35,43 @@ public class CreateMint {
         mintWriter.println("");
         mintWriter.println("LAYER FLOW");
         mintWriter.println("");
-        int inPortCount = 1;
-        int outPortCount = 1;
+        int inPortCount = 0;
+        int outPortCount = 0;
         //adding inports
-        for(String port:graph.inPorts){
-            flowPorts+="inPort"+inPortCount+",";
-            inPortCount++;
+        for(muGate port:graph.gates){
+            if(port.type.equals("input")){
+                flowPorts+="inPort"+inPortCount+",";
+                port.mintName = "inPort"+inPortCount;
+                inPortCount++;
+            }
         }
         //adding outports
-        for (String port:graph.outPorts){
-            flowPorts+="outPort"+outPortCount;
-            if (outPortCount == graph.outPorts.size()) flowPorts+=";";
-            else flowPorts+=",";
-            outPortCount++;
+        for (muGate port:graph.gates){
+            if(port.type.equals("output")){
+                flowPorts+="outPort"+outPortCount;
+                port.mintName = "outPort"+outPortCount;
+                if (outPortCount == graph.outPorts.size()) flowPorts+=";";
+                else flowPorts+=",";
+                outPortCount++;
+            }
         }
         mintWriter.println("PORT " + flowPorts);
         //print gates
         int deviceCount = 0;
         for (muGate mg:graph.gates){
-            String mint = mg.primitive.mintSyntax;
-            mint = mint.replaceAll("NAME", "Device"+deviceCount);
-            //System.out.println(mg.primitive.mintSyntax);
-            mintWriter.println(mint);
-            deviceCount++;
+            if (mg.type.equals("gate")){
+                String mint = mg.primitive.mintSyntax;
+                mint = mint.replaceAll("NAME", "Device"+deviceCount);
+                mg.mintName = "Device"+deviceCount;
+                //System.out.println(mg.primitive.mintSyntax);
+                mintWriter.println(mint);
+                deviceCount++;
+            }
+        }
+        int channelCount = 0;
+        for(Wire w : graph.wires){
+            mintWriter.println("CHANNEL "+"channel"+channelCount+" from "+ w.fromGate.mintName+" 2 to " +w.toGate.mintName+" 4 w=100;");
+            channelCount++;
         }
         //print channels connecting
         //for ()

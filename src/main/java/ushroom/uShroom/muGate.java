@@ -16,6 +16,7 @@ public class muGate extends DGate{
     public String type;
     public String ioWire;
     public int io;
+    public String mintName;
     
     public muGate(String type, String wireName){
         this.type = type;
