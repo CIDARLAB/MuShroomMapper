@@ -16,6 +16,7 @@ public class Wire {
     public muGate fromGate;
     public muGate toGate;
     public String type;
+
     public Wire(String wireName){
         name=wireName;
         type = "connector";

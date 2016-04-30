@@ -1,1 +1,4 @@
 /target/
+*.uf
+*.ucf
+*.ucf.txt

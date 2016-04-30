@@ -9,6 +9,7 @@ import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.layout.mxCompactTreeLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
+import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -30,37 +31,16 @@ public class Visualization extends JApplet{
     private static final Color DEFAULT_BG_COLOR = Color.decode("#FAFBFF");
     private static final Dimension DEFAULT_SIZE = new Dimension(1000, 750);
     
-    private JGraphXAdapter<Image, DefaultEdge> jgxAdapter;
     
-    public void display(DirectedGraph g){        
+    
+    public void display(mxGraph g){        
         
-        
-        // create a visualization using JGraph, via an adapter
-        jgxAdapter = new JGraphXAdapter<>(g);
-        
-        // get graph stylesheet
-        mxStylesheet stylesheet = jgxAdapter.getStylesheet();
-        
-        // define image style name
-        String styleName = "ymixerImageStyle";
-        
-        // define image style           
-        Hashtable<String, Object> style = new Hashtable<String, Object>();
-        style.put( mxConstants.STYLE_SHAPE, mxConstants.SHAPE_IMAGE);
-        style.put( mxConstants.STYLE_IMAGE, "ymixer.png");
-        style.put( mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_BOTTOM);
-
-        stylesheet.putCellStyle( styleName, style);
-
-        Object v1 = jgxAdapter.insertVertex(jgxAdapter.getDefaultParent(), null, "Vertex 1", 0, 0, 80, 30, styleName);
-        //jgxAdapter.setCellStyle(styleName, jgxAdapter.);
-        
-        getContentPane().add(new mxGraphComponent(jgxAdapter));
+        getContentPane().add(new mxGraphComponent(g));
         resize(DEFAULT_SIZE);
         
         // positioning via jgraphx layouts
-        mxHierarchicalLayout layout = new mxHierarchicalLayout(jgxAdapter, WEST);
-        layout.execute(jgxAdapter.getDefaultParent());
+        mxHierarchicalLayout layout = new mxHierarchicalLayout(g, WEST);
+        layout.execute(g.getDefaultParent());
 
         JFrame frame = new JFrame();
         frame.getContentPane().add(this);

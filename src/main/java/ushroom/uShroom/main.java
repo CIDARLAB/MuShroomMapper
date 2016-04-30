@@ -21,7 +21,7 @@ public class main {
      * @param args the command line arguments
      * @throws java.io.IOException
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ShroomException {
         //TODO: Take in user input on verilog and ucf 
        
         
@@ -35,18 +35,13 @@ public class main {
         
         System.out.println("Reading Verilog...");
         netListTransition nlt = new netListTransition(ucf);
-        /*
-        //TODO: Create JGraphX from netlist Graph while error checking
+        //Create JGraphX from netlist Graph while error checking
         System.out.println("Creating JGraphX, error checking...");
         GraphTranslation gt = new GraphTranslation(nlt, ucf);
         
-        // create a JGraphX graph
-        DirectedGraph g = GraphTranslation.generateDefault();
-               
         // create a visualization using JGraph, via an adapter
         Visualization v = new Visualization();
-        v.display(g);
-        */
+        v.display(gt.jgraphx);
         //Create Mint file from netlist graph and parsed ucf
         System.out.println("Creating Mint file output...");
         CreateMint cm = new CreateMint(nlt, ucf);
