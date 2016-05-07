@@ -27,11 +27,13 @@ public class main {
         System.out.println("Reading UCF...");
         ParsedUCF ucf = new ParsedUCF("simpleucf.ucf");
         System.out.println(ucf.operators);
+        //Read Verilog
         System.out.println("Reading Verilog...");
         netListTransition nlt = new netListTransition(ucf);
         //Create JGraphX from netlist Graph while error checking
         System.out.println("Creating JGraphX, error checking...");
         GraphTranslation gt = new GraphTranslation(nlt, ucf);
+        
         // create a visualization using JGraph, via an adapter
         Visualization v = new Visualization();
         v.display(gt.jgraphx);

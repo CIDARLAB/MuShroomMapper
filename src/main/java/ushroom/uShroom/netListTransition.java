@@ -29,8 +29,7 @@ public class netListTransition {
     public List<String> outPorts = new ArrayList<String>();
     public List<Wire> wires = new ArrayList<Wire>();
     public List<muGate> gates = new ArrayList<muGate>();
-    
-    
+       
     public netListTransition(ParsedUCF ucf){
         Scanner reader = new Scanner(System.in);  // Reading from System.in
         System.out.println("Enter path to Verilog file: ");

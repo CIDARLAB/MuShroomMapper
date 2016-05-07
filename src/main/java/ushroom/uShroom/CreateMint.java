@@ -50,7 +50,7 @@ public class CreateMint {
             if(port.type.equals("output")){
                 flowPorts+="outPort"+outPortCount;
                 port.mintName = "outPort"+outPortCount;
-                if (outPortCount == graph.outPorts.size()) flowPorts+=";";
+                if (outPortCount == (graph.outPorts.size()-1)) flowPorts+=", r=100;";
                 else flowPorts+=",";
                 outPortCount++;
             }
@@ -60,7 +60,7 @@ public class CreateMint {
         int deviceCount = 0;
         for (muGate mg:graph.gates){
             if (mg.type.equals("gate")){
-                String mint = mg.primitive.mintSyntax;
+                String mint = mg.primitive.mintSyntax + ";";
                 mint = mint.replaceAll("NAME", "Device"+deviceCount);
                 mg.mintName = "Device"+deviceCount;
                 //System.out.println(mg.primitive.mintSyntax);
@@ -73,10 +73,14 @@ public class CreateMint {
             mintWriter.println("CHANNEL "+"channel"+channelCount+" from "+ w.fromGate.mintName+" 2 to " +w.toGate.mintName+" 4 w=100;");
             channelCount++;
         }
-        //print channels connecting
-        //for ()
+        
+        mintWriter.println("");
         mintWriter.println("END LAYER");
+        mintWriter.println("");
         mintWriter.println("LAYER CONTROL");
+        mintWriter.println("");
+        mintWriter.println("#To be implemented");
+        mintWriter.println("");
         mintWriter.println("END LAYER");
         mintWriter.close();
     }

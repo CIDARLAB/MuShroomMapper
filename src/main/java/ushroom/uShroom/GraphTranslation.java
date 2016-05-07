@@ -31,9 +31,7 @@ public class GraphTranslation{
     public mxGraph jgraphx = new mxGraph();
     mxStylesheet styleSheet = jgraphx.getStylesheet();
     Object parent = jgraphx.getDefaultParent();
-    List<Object> vertices = new ArrayList<Object>();
-
-    
+    List<Object> vertices = new ArrayList<Object>();   
     
     GraphTranslation(netListTransition net, ParsedUCF ucf) throws ShroomException{
         //Error checking!!
