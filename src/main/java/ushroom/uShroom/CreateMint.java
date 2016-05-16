@@ -13,8 +13,11 @@ import java.util.Scanner;
 
 /**
  *  Takes the modified netlist graph and the parsed UCF and creates a Mint file for use in Fluigi
- * @author Riastradh
+ * @author Shane
  */
+
+//To do: set up Mint control layer writing
+
 public class CreateMint {
     String line = "";
     String fileName;

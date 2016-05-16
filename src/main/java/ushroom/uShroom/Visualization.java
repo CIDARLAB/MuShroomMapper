@@ -22,9 +22,12 @@ import org.jgrapht.DirectedGraph;
 import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DefaultEdge;
 
+/**
+ *
+ * @author Everett
+ */
 
-
-
+//To do: Will this work with the Fluigi flow GUI?
 
 public class Visualization extends JApplet{
     // 

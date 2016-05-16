@@ -9,6 +9,9 @@ package ushroom.uShroom;
  *
  * @author Everett
  */
+
+//To do: Update for control layer
+
 public class GatePrimitive {
     public int inputs, outputs;
     public String picturePath, operator, mintSyntax;

@@ -27,6 +27,9 @@ import org.jgrapht.graph.DefaultEdge;
  *
  * @author Everett
  */
+
+//To do: Consider abandoning JGraphX (Will its visualization fit into the overall Fluigi flow's GUI? 
+
 public class GraphTranslation{
     public mxGraph jgraphx = new mxGraph();
     mxStylesheet styleSheet = jgraphx.getStylesheet();

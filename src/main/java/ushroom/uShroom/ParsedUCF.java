@@ -22,6 +22,9 @@ import java.util.regex.Pattern;
  *
  * @author Everett
  */
+
+//To Do: Convert to JSON list of objects (where each operator in an object) format!
+
 public class ParsedUCF {
     public List<GatePrimitive> primitives = new ArrayList<GatePrimitive>();
     public List<String> operators = new ArrayList<String>();

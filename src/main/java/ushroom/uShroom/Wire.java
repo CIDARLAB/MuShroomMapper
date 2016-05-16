@@ -9,8 +9,11 @@ import org.cellocad.BU.dom.DGate;
 
 /**
  *
- * @author Riastradh
+ * @author Shane
  */
+
+//To do: Convert to extending DWire?
+
 public class Wire {
     public String name;
     public muGate fromGate;

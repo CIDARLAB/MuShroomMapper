@@ -13,7 +13,7 @@ import org.jgrapht.DirectedGraph;
 
 /**
  *
- * @author Riastradh
+ * @author Shane
  */
 public class main {
 

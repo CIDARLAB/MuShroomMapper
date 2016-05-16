@@ -18,7 +18,7 @@ import org.cellocad.BU.netsynth.Utilities;
 
 /**
  *
- * @author Riastradh
+ * @author Shane
  * creates our graph object from the output of netlist
  */
 public class netListTransition {

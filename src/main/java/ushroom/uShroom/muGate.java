@@ -9,7 +9,7 @@ import org.cellocad.BU.dom.DGate;
 
 /**
  *
- * @author Riastradh
+ * @author Shane
  */
 public class muGate extends DGate{
     public GatePrimitive primitive;

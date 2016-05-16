@@ -9,6 +9,9 @@ package ushroom.uShroom;
  *
  * @author Everett
  */
+
+//To Do: Look this over (Shane had nothing to do with this file)
+
 class ShroomException extends Exception {
    public ShroomException(String msg){
       super(msg);
