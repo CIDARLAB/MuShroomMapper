@@ -29,6 +29,7 @@ public class CreateMint {
     
     
     public CreateMint(netListTransition graph, ParsedUCF ucf) throws UnsupportedEncodingException, FileNotFoundException{
+        //move into main?
         Scanner ufNameInput = new Scanner(System.in);  // Reading from System.in
         System.out.println("What would you like to name your .uf file? ");
         fileName = ufNameInput.nextLine(); // Scans the next token of the input as an int.
@@ -59,7 +60,7 @@ public class CreateMint {
             }
         }
         mintWriter.println("PORT " + flowPorts);
-        //print gates
+        //adding devices
         int deviceCount = 0;
         for (muGate mg:graph.gates){
             if (mg.type.equals("gate")){
@@ -72,6 +73,7 @@ public class CreateMint {
             }
         }
         int channelCount = 0;
+        //adding channels
         for(Wire w : graph.wires){
             mintWriter.println("CHANNEL "+"channel"+channelCount+" from "+ w.fromGate.mintName+" 2 to " +w.toGate.mintName+" 4 w=100;");
             channelCount++;
@@ -81,15 +83,13 @@ public class CreateMint {
         mintWriter.println("END LAYER");
         mintWriter.println("");
         mintWriter.println("LAYER CONTROL");
+        //Where control stuff would go
         mintWriter.println("");
         mintWriter.println("#To be implemented");
         mintWriter.println("");
         mintWriter.println("END LAYER");
         mintWriter.close();
     }
-
-    public void createChannel(String netList, String wireName){
-        //for line in netList
-            //
-    }
 }
+
+
