@@ -1,0 +1,14 @@
+# .uf output by muShroomMapper
+DEVICE testDevice
+
+LAYER FLOW
+
+PORT 
+
+END LAYER
+
+LAYER CONTROL
+
+#To be implemented
+
+END LAYER
