@@ -36,7 +36,7 @@ public class GraphTranslation{
     Object parent = jgraphx.getDefaultParent();
     List<Object> vertices = new ArrayList<Object>();   
     
-    GraphTranslation(NetListTransition net, ParsedUCF ucf) throws ShroomException{
+    GraphTranslation(NetListTransition net, ParsedUCF ucf) throws Exceptions{
         //Error checking!!
         checkForErrors(net, ucf);
         
@@ -60,7 +60,7 @@ public class GraphTranslation{
         }
     }
     
-    private void checkForErrors(NetListTransition net, ParsedUCF ucf) throws ShroomException{
+    private void checkForErrors(NetListTransition net, ParsedUCF ucf) throws Exceptions{
         for( MuGate d : net.gates ){
             //TODO: Skip input and piutput gates 
             if(d.type.equals("input") || d.type.equals("output")){
@@ -69,16 +69,16 @@ public class GraphTranslation{
                 //Check if all operators occuring in netlist are in ucf
                 if(!(ucf.operators.contains(d.symbol))){
                     //if not
-                    throw new ShroomException("Dgate operator "+d.symbol+" not found in UCF");
+                    throw new Exceptions("Dgate operator "+d.symbol+" not found in UCF");
                 }
                 for(GatePrimitive prim : ucf.primitives){
                     if(d.symbol.equals(prim.operator)){
                         
                         //check that number of inputs match and only 1 output
                         if(d.input.size() != prim.inputs){
-                            throw new ShroomException("DGate "+d.gname+" has incorrect number of inputs");
+                            throw new Exceptions("DGate "+d.gname+" has incorrect number of inputs");
                         } else if (prim.outputs != 1){
-                            throw new ShroomException("DGate "+d.gname+" has incorrect number of outputs");
+                            throw new Exceptions("DGate "+d.gname+" has incorrect number of outputs");
                         }
                                 
                         //add the primitave as the MuGate's primitive

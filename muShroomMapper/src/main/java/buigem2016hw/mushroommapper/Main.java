@@ -23,7 +23,7 @@ public class Main {
      * @throws java.io.IOException
      * @throws ushroom.uShroom.ShroomException
      */
-    public static void main(String[] args) throws IOException, ShroomException {
+    public static void main(String[] args) throws IOException, Exceptions {
                
         //Read in ucf
         Scanner reader = new Scanner(System.in);  // Reading from System.in
