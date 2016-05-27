@@ -6,13 +6,14 @@
 package buigem2016hw.mushroommapper;
 
 import org.cellocad.BU.dom.DGate;
+import org.json.JSONObject;
 
 /**
  *
  * @author Shane
  */
 public class MuGate extends DGate{
-    public GatePrimitive primitive;
+    public JSONObject opInfo;
     public String type;
     public String ioWire;
     public int io;
@@ -34,7 +35,7 @@ public class MuGate extends DGate{
         this.type=type;
     }
     
-    public void addPrimitive(GatePrimitive prim){
-        primitive = prim;
+    public void addOpInfo(JSONObject JSONInput){
+        opInfo = JSONInput;
     }
 }

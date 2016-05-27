@@ -7,13 +7,10 @@ package buigem2016hw.mushroommapper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import org.cellocad.BU.dom.DGate;
 import org.cellocad.BU.dom.DWire;
 import org.cellocad.BU.fluigi.VerilogFluigiGrammar;
 import org.cellocad.BU.fluigi.VerilogFluigiWalker;
-import org.cellocad.BU.netsynth.NetSynth;
-import static org.cellocad.BU.netsynth.NetSynth.printuFGate;
 import org.cellocad.BU.netsynth.Utilities;
 
 /**
@@ -23,16 +20,16 @@ import org.cellocad.BU.netsynth.Utilities;
  */
 
 /*To do:
-Move user input to main
+Move user input to main ----> Done!
 */
 public class NetListTransition {
     public String filepath;
     public String line;
     VerilogFluigiWalker walker;
-    public List<String> inPorts = new ArrayList<String>();
-    public List<String> outPorts = new ArrayList<String>();
-    public List<MuWire> wires = new ArrayList<MuWire>();
-    public List<MuGate> gates = new ArrayList<MuGate>();
+    public List<String> inPorts = new ArrayList<>();
+    public List<String> outPorts = new ArrayList<>();
+    public List<MuWire> wires = new ArrayList<>();
+    public List<MuGate> gates = new ArrayList<>();
        
     public NetListTransition(ParsedUCF ucf, String vFilePath){
         line = "";
@@ -44,11 +41,23 @@ public class NetListTransition {
         outPorts = walker.details.outputs;
         //create list of channels from wiresList command
         int gateCount=0;
-        for(String wireName:walker.details.wires){
+        for(DGate dg:walker.netlist)                    //translating all operation gates as MuGates
+        {
+            gates.add(new MuGate(dg, "gate"));
+            gates.get(gateCount).gindex = gateCount;
+            gateCount++;
+        }
+        for (MuGate mg:gates)                           //adding opInfo to each gate
+        {
+            mg.addOpInfo(ucf.opMap.get(mg.symbol));
+        }
+        for(String wireName:walker.details.wires)       //translating all traditional verilog wires to MuWires
+        {
             wires.add(new MuWire(wireName));
             System.out.println(wireName);
         }
-        for(String wireName:walker.details.inputs){
+        for(String wireName:walker.details.inputs)      //translating all inputs as both input MuGates and connecting MuWires
+        {
             MuGate in = new MuGate("input", wireName);
             MuWire w = new MuWire(wireName, 0, in);
             wires.add(w);
@@ -57,13 +66,8 @@ public class NetListTransition {
             gateCount++;
             //System.out.println(wireName);
         }
-        for(DGate dg:walker.netlist)
+        for(String wireName:walker.details.outputs)     //translating all outputs as both output MuGates and connecting MuWires
         {
-            gates.add(new MuGate(dg, "gate"));
-            gates.get(gateCount).gindex = gateCount;
-            gateCount++;
-        }
-        for(String wireName:walker.details.outputs){
             MuGate out = new MuGate("output", wireName);
             wires.add(new MuWire(wireName, 1 , out));
             gates.add(out);
@@ -71,25 +75,10 @@ public class NetListTransition {
             gateCount++;
         }
 
-        //list of gates
-        
-        for (String in:walker.details.inputs){
-            
-        }
-
         parseNetList();
       
-        for (MuGate mg:gates){
-            for(GatePrimitive gp:ucf.primitives)
-            {
-                System.out.println("gate symbol:"+mg.symbol+" prim operator:"+gp.operator);
-                if(mg.symbol.equals(gp.operator)){
-                    mg.addPrimitive(gp);
-                    System.out.println("Primitive added!");
-                    continue;
-                }
-            }
-        }
+
+
     }
     public void parseNetList(){
 

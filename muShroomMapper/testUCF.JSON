@@ -1,0 +1,21 @@
+operators : [
+	{
+		"operator":"+",
+		"name":"ymixer",
+		"inputs":2,
+		"outputs":1,
+		"picpath":"path/to/ymixer/pic",
+		"mint":"V TREE NAME 2 to 1 spacing=50 channelWidth=100",
+		"layer":"flow"
+	},
+	{
+		"operator":"*",
+		"name":"serpmixer",
+		"inputs":2,
+		"outputs":1,
+		"picpath":"path/to/serpmixer/pic",
+		"import":"serpentine_mixer",
+		"mint":"smNUMBER",
+		"layer":"flow"
+	}
+]
