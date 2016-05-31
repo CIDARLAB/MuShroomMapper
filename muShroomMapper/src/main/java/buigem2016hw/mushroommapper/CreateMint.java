@@ -22,8 +22,6 @@ import org.json.JSONException;
 public class CreateMint {
     String line = "";
     String fileName;
-    //String portRadius = "100";
-    //String channelWidth = "100";
     String flowPorts = "";
     //String controlPorts = ""; //control layer to be implemented
     List<String> channelList;
@@ -65,7 +63,7 @@ public class CreateMint {
         int deviceCount = 0;
         for (MuGate mg:graph.gates){
             if (mg.type.equals("gate")){
-                String mint = mg.opInfo.get(mg.symbol) + ";";
+                String mint = mg.opInfo.get("mint") + ";";
                 mint = mint.replaceAll("NAME", "Device"+deviceCount);
                 mg.mintName = "Device"+deviceCount;
                 //System.out.println(mg.primitive.mintSyntax);
