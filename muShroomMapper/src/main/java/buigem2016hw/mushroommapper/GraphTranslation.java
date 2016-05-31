@@ -12,8 +12,9 @@ import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -95,7 +96,6 @@ public class GraphTranslation{
     public static DirectedGraph generateDefault(){
         // create a JGraphT graph
         DirectedGraph g = new DefaultDirectedGraph( DefaultEdge.class );
-
         Image img = null; 
         Image imga = null,imgb = null ,imgc = null,imgd = null;
         try{
@@ -104,6 +104,7 @@ public class GraphTranslation{
             imgb = ImageIO.read(new File("b.jpg"));
             imgc = ImageIO.read(new File("c.jpg"));
             imgd = ImageIO.read(new File("d.jpg"));
+
         } catch (IOException ex) {
             Logger.getLogger(GraphTranslation.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -134,7 +135,7 @@ public class GraphTranslation{
          for( String op : ucf.opMap.keySet() ){
             JSONObject opObj = ucf.opMap.get(op);
             String styleName = "style_" + op;
-            Hashtable<String, Object> style = new Hashtable<>();
+            Map<String, Object> style = new HashMap<>();
             style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_IMAGE);
             style.put(mxConstants.STYLE_IMAGE, opObj.get("picpath"));
             style.put(mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_BOTTOM);
