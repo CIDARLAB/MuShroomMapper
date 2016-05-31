@@ -32,14 +32,16 @@ public class Main {
        
         //Read in ucf
         Scanner reader = new Scanner(System.in);  // Reading from System.in
-        System.out.println("Enter path/to/UCFFile: ");
-        String ucfPath = reader.nextLine(); // reads in filepath
+        //System.out.println("Enter path/to/UCFFile: ");
+        //String ucfPath = reader.nextLine(); // reads in filepath
+        String ucfPath = "SampleInput/sample.json";     //temp path for debugging
         System.out.println("Reading UCF...");
         ParsedUCF ucf = new ParsedUCF(ucfPath);
         
         //Read Verilog + Make Graph
-        System.out.println("Enter path/to/VerilogFile: ");
-        String vPath = reader.nextLine(); // reads in filepath
+        //System.out.println("Enter path/to/VerilogFile: ");
+        //String vPath = reader.nextLine(); // reads in filepath
+        String vPath = "SampleInput/sample.v";          //temp path for debugging
         System.out.println("Reading Verilog...");
         NetListTransition nlt = new NetListTransition(ucf, vPath);
         

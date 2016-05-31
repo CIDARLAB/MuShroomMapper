@@ -139,7 +139,7 @@ public class GraphTranslation{
             String styleName = "style_" + op;
             Map<String, Object> style = new HashMap<>();
             style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_IMAGE);
-            style.put(mxConstants.STYLE_IMAGE, opObj.get("picpath"));
+            style.put(mxConstants.STYLE_IMAGE, opObj.getString("picpath"));
             style.put(mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_BOTTOM);
             styleSheet.putCellStyle(styleName, style);  
         }
