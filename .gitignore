@@ -1,6 +1,8 @@
+*
+!/**/
+!*.*
 /target/
 muShroomMapper/target/
 *.uf
-*.ucf
-*.ucf.txt
+*.json
 *.v
