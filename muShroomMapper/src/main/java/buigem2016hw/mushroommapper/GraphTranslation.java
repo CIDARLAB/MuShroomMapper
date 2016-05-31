@@ -75,13 +75,13 @@ public class GraphTranslation{
                 }
                 for(String op: ucf.opMap.keySet()){
                     if(d.symbol.equals(op)){
-                        JSONObject opObj = ucf.opMap.get(op);
+                        JSONObject opObj = ucf.opMap.get(op);       //
                         //check that number of inputs match and only 1 output
-                        if(d.input.size() != (int) opObj.get("inputs"))
+                        if(d.input.size() != opObj.getInt("inputs"))
                         {
                             throw new Exceptions("DGate "+d.gname+" has incorrect number of inputs");
                         } 
-                        else if ((int) opObj.get("outputs") != 1){
+                        else if ( opObj.getInt("outputs") != 1){
                             throw new Exceptions("DGate "+d.gname+" has incorrect number of outputs");
                         }
                                 
@@ -93,6 +93,8 @@ public class GraphTranslation{
         }        
     }
     
+    
+    //old E code for testing custom images... Doesn't work?
     public static DirectedGraph generateDefault(){
         // create a JGraphT graph
         DirectedGraph g = new DefaultDirectedGraph( DefaultEdge.class );

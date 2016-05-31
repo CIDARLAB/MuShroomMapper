@@ -27,7 +27,7 @@ public class Main {
      * @throws org.json.JSONException
      * @throws ushroom.uShroom.ShroomException
      */
-    public static void main(String[] args) throws IOException, FileNotFoundException, JSONException {
+    public static void main(String[] args) throws IOException, FileNotFoundException, JSONException, Exceptions {
          
        
         //Read in ucf
@@ -36,28 +36,25 @@ public class Main {
         String ucfPath = reader.nextLine(); // reads in filepath
         System.out.println("Reading UCF...");
         ParsedUCF ucf = new ParsedUCF(ucfPath);
-        ucf.opMap.get("+");
-                
-        /*
-        System.out.println(ucf.opMap.values());
-        //Read Verilog
+        
+        //Read Verilog + Make Graph
         System.out.println("Enter path/to/VerilogFile: ");
         String vPath = reader.nextLine(); // reads in filepath
         System.out.println("Reading Verilog...");
         NetListTransition nlt = new NetListTransition(ucf, vPath);
+        
         //Create JGraphX from netlist Graph while error checking
         System.out.println("Creating JGraphX, error checking...");
         GraphTranslation gt = new GraphTranslation(nlt, ucf);
         
-        // create a visualization using JGraph, via an adapter
+        // create a visualization using JGraphX
         Visualization v = new Visualization();
         v.display(gt.jgraphx);
+        
         //Create Mint file from netlist graph and parsed ucf
         System.out.println("Creating Mint file output...");
         CreateMint cm = new CreateMint(nlt, ucf);
-        
         System.out.println("All done!");
-       */
     }
     
 }
