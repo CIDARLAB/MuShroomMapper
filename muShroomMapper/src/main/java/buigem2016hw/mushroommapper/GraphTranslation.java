@@ -5,7 +5,6 @@
  */
 package buigem2016hw.mushroommapper;
 
-import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
@@ -18,10 +17,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import org.cellocad.BU.dom.DGate;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  *
@@ -34,9 +34,9 @@ public class GraphTranslation{
     public mxGraph jgraphx = new mxGraph();
     mxStylesheet styleSheet = jgraphx.getStylesheet();
     Object parent = jgraphx.getDefaultParent();
-    List<Object> vertices = new ArrayList<Object>();   
+    List<Object> vertices = new ArrayList<>();   
     
-    GraphTranslation(NetListTransition net, ParsedUCF ucf) throws Exceptions{
+    GraphTranslation(NetListTransition net, ParsedUCF ucf) throws Exceptions, JSONException{
         //Error checking!!
         checkForErrors(net, ucf);
         
@@ -46,7 +46,7 @@ public class GraphTranslation{
         jgraphx.getModel().endUpdate();
     }
     
-    private void generateJGraphX(NetListTransition net, ParsedUCF ucf){
+    private void generateJGraphX(NetListTransition net, ParsedUCF ucf) throws JSONException{
         //create sytles
         generateStyles(ucf);
         for( MuGate d : net.gates ){
@@ -60,29 +60,32 @@ public class GraphTranslation{
         }
     }
     
-    private void checkForErrors(NetListTransition net, ParsedUCF ucf) throws Exceptions{
+    private void checkForErrors(NetListTransition net, ParsedUCF ucf) throws Exceptions, JSONException{
         for( MuGate d : net.gates ){
             //TODO: Skip input and piutput gates 
             if(d.type.equals("input") || d.type.equals("output")){
                 continue;
-            }else{
+            }
+            else{
                 //Check if all operators occuring in netlist are in ucf
-                if(!(ucf.operators.contains(d.symbol))){
+                if(!(ucf.opMap.keySet().contains(d.symbol))){
                     //if not
                     throw new Exceptions("Dgate operator "+d.symbol+" not found in UCF");
                 }
-                for(GatePrimitive prim : ucf.primitives){
-                    if(d.symbol.equals(prim.operator)){
-                        
+                for(String op: ucf.opMap.keySet()){
+                    if(d.symbol.equals(op)){
+                        JSONObject opObj = ucf.opMap.get(op);
                         //check that number of inputs match and only 1 output
-                        if(d.input.size() != prim.inputs){
+                        if(d.input.size() != (int) opObj.get("inputs"))
+                        {
                             throw new Exceptions("DGate "+d.gname+" has incorrect number of inputs");
-                        } else if (prim.outputs != 1){
+                        } 
+                        else if ((int) opObj.get("outputs") != 1){
                             throw new Exceptions("DGate "+d.gname+" has incorrect number of outputs");
                         }
                                 
                         //add the primitave as the MuGate's primitive
-                        d.addPrimitive(prim);
+                        d.addOpInfo(opObj);
                     }
                 }
             }
@@ -127,14 +130,15 @@ public class GraphTranslation{
         return g;
     }
 
-    private void generateStyles(ParsedUCF ucf) {
-         for( GatePrimitive p : ucf.primitives ){
-            String styleName = "style_"+p.operator;
-            Hashtable<String, Object> style = new Hashtable<String, Object>();
-            style.put( mxConstants.STYLE_SHAPE, mxConstants.SHAPE_IMAGE);
-            style.put( mxConstants.STYLE_IMAGE, p.picturePath);
-            style.put( mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_BOTTOM);
+    private void generateStyles(ParsedUCF ucf) throws JSONException {
+         for( String op : ucf.opMap.keySet() ){
+            JSONObject opObj = ucf.opMap.get(op);
+            String styleName = "style_" + op;
+            Hashtable<String, Object> style = new Hashtable<>();
+            style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_IMAGE);
+            style.put(mxConstants.STYLE_IMAGE, opObj.get("picpath"));
+            style.put(mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_BOTTOM);
             styleSheet.putCellStyle(styleName, style);  
-         }
+        }
     }
 }

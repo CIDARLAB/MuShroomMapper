@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Scanner;
+import org.json.JSONException;
 
 /**
  *  Takes the modified netlist graph and the parsed UCF and creates a Mint file for use in Fluigi
@@ -28,7 +29,7 @@ public class CreateMint {
     List<String> channelList;
     
     
-    public CreateMint(NetListTransition graph, ParsedUCF ucf) throws UnsupportedEncodingException, FileNotFoundException{
+    public CreateMint(NetListTransition graph, ParsedUCF ucf) throws UnsupportedEncodingException, FileNotFoundException, JSONException{
         //move into main?
         Scanner ufNameInput = new Scanner(System.in);  // Reading from System.in
         System.out.println("What would you like to name your .uf file? ");
@@ -64,7 +65,7 @@ public class CreateMint {
         int deviceCount = 0;
         for (MuGate mg:graph.gates){
             if (mg.type.equals("gate")){
-                String mint = mg.primitive.mintSyntax + ";";
+                String mint = mg.opInfo.get(mg.symbol) + ";";
                 mint = mint.replaceAll("NAME", "Device"+deviceCount);
                 mg.mintName = "Device"+deviceCount;
                 //System.out.println(mg.primitive.mintSyntax);
