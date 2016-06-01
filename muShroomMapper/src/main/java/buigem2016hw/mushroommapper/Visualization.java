@@ -51,6 +51,5 @@ public class Visualization extends JApplet{
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
-        
     }
 }
