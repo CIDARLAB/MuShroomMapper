@@ -16,11 +16,11 @@ import org.cellocad.BU.netsynth.Utilities;
 /**
  *
  * @author Shane
- * creates our graph object from the output of netlist
+ * creates our graph object from the output of NetSynth (parsed Verilog)
  */
 
 /*To do:
-Move user input to main ----> Done!
+
 */
 public class NetListTransition {
     public String filepath;
@@ -33,7 +33,7 @@ public class NetListTransition {
        
     public NetListTransition(ParsedUCF ucf, String vFilePath){
         line = "";
-        line = Utilities.getFileContentAsString(vFilePath);      //check path rules
+        line = Utilities.getFileContentAsString(vFilePath);
         walker = VerilogFluigiGrammar.getuFWalker(line);
         //create list of in ports from inputList command
         inPorts = walker.details.inputs;

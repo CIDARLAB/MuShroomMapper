@@ -29,8 +29,10 @@ import org.json.JSONObject;
  * @author Everett
  */
 
-//To do: Consider abandoning JGraphX (Will its visualization fit into the overall Fluigi flow's GUI? 
-
+/*To do: 
+    Consider abandoning JGraphX (Will its visualization fit into the overall Fluigi flow's GUI? 
+    Move error checking elsewhere? It doesn't seem logical here...
+*/
 public class GraphTranslation{
     public mxGraph jgraphx = new mxGraph();
     mxStylesheet styleSheet = jgraphx.getStylesheet();
