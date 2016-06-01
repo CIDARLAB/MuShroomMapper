@@ -47,10 +47,9 @@ public class Visualization extends JApplet{
 
         JFrame frame = new JFrame();
         frame.getContentPane().add(this);
-        frame.setTitle("JGraphT Adapter to JGraph");
+        frame.setTitle("muShroomMapper Device Preview");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
-        
     }
 }
