@@ -9,7 +9,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 import org.cellocad.BU.netsynth.Utilities;
-import org.jgrapht.DirectedGraph;
 import org.json.JSONException;
 
 
