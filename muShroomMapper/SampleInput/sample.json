@@ -15,7 +15,7 @@
 		"outputs":1,
 		"picpath":"path/to/serpmixer/pic",
 		"import":"serpentine_mixer",
-		"mint":"smNUMBER",
+		"mint":"sm",
 		"layer":"flow"
 	}
 ]
