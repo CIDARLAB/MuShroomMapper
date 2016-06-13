@@ -40,16 +40,19 @@ public class NetListTransition {
         //create list of out ports from outputList command
         outPorts = walker.details.outputs;
         //create list of channels from wiresList command
-        int gateCount=0;
+        int gateCount=0;            //counts the number of gates throughout for use with IDing gates for visualization
         for(DGate dg:walker.netlist)                    //translating all operation gates as MuGates
         {
-            gates.add(new MuGate(dg, "gate"));
-            gates.get(gateCount).gindex = gateCount;
+            MuGate opGate = new MuGate(dg, "gate");
+            gates.add(opGate);
+            opGate.gindex = gateCount;
             gateCount++;
         }
-        for (MuGate mg:gates)                           //adding opInfo to each gate
+        for (MuGate mg:gates)                           //adding opInfo to each operation gate
         {
             mg.addOpInfo(ucf.opMap.get(mg.symbol));
+            mg.inTermFlag = true;       //these operation gates will have their in/outTerm JSONArrays defined in their opInfo
+            mg.outTermFlag = true;
         }
         for(String wireName:walker.details.wires)       //translating all traditional verilog wires to MuWires
         {
@@ -58,8 +61,10 @@ public class NetListTransition {
         }
         for(String wireName:walker.details.inputs)      //translating all inputs as both input MuGates and connecting MuWires
         {
-            MuGate in = new MuGate("input", wireName);
-            MuWire w = new MuWire(wireName, 0, in);
+            MuGate in = new MuGate("input", wireName);  //the MuGate for the inport
+            MuWire w = new MuWire(wireName, 0, in);     //the MuWire coming out of the inport
+            in.outTermVal = 2;
+            in.inTermVal = -1;
             wires.add(w);
             gates.add(in);
             in.gindex = gateCount;
@@ -68,8 +73,10 @@ public class NetListTransition {
         }
         for(String wireName:walker.details.outputs)     //translating all outputs as both output MuGates and connecting MuWires
         {
-            MuGate out = new MuGate("output", wireName);
-            wires.add(new MuWire(wireName, 1 , out));
+            MuGate out = new MuGate("output", wireName);//the MuGate for the outport
+            wires.add(new MuWire(wireName, 1 , out));   //the MuWire off the outport
+            out.inTermVal = 4;
+            out.outTermVal = -1;
             gates.add(out);
             out.gindex = gateCount;
             gateCount++;
@@ -93,11 +100,13 @@ public class NetListTransition {
                 else if("output".equals(wire.type)){
                     if(wire.name.equals(gate.output.name)) wire.setOrigin(gate);
                 }
-                else{  
-                if(wire.name.equals(gate.output.name)) wire.setOrigin(gate);
-                else for(DWire input:gate.input){
-                    if(wire.name.equals(input.name)) wire.setDestination(gate);
-                }
+                else
+                {  
+                    if(wire.name.equals(gate.output.name)) wire.setOrigin(gate);
+                    else for(DWire input:gate.input)
+                    {
+                        if(wire.name.equals(input.name)) wire.setDestination(gate);
+                    }
                 }
             }
         }      
