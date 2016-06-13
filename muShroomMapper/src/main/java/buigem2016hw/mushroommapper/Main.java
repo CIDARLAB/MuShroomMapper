@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package buigem2016hw.mushroommapper;
 
 import java.io.FileNotFoundException;
@@ -15,6 +10,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.cellocad.BU.netsynth.Utilities;
 import org.json.JSONException;
 import org.apache.commons.cli.Options;
+import org.cidarlab.fluigi.fluigi.Fluigi;
 
 /**
  *
@@ -26,7 +22,7 @@ import org.apache.commons.cli.Options;
  */
 public class Main {
 
-
+    /**
     //these three from fluigi CLI
     private static String verilogFilePath = null;
     private static String outputFormat = "DEFAULT";
@@ -34,21 +30,21 @@ public class Main {
     
     private static Options createCommandLineOptions() {
         final Options options = new Options();
-        /**
-         * Fluigi Options
+        
+        // * Fluigi Options
         options.addOption("i", "init", true, "Give the initialization (*.ini) file, 3D initalization (*_3d.ini) file.");
         options.addOption("o", "out", true, "Specify output format (json,eps,svg)");
         options.addOption("h", "help", false, "Show help information.");
         options.addOption("v", "hdl", false, "This enables the verilog file input mode flag");
         options.addOption("d", "debug", false, "This enables all the debug printing");
-        */
+        
         return options;
     }
     
     private static void outputCommandLineHelp(final Options options) 
     {
         final HelpFormatter formater = new HelpFormatter();
-        formater.printHelp("Usage: fluigi <filename> [-i <initialization_file>] [-o output format]", options);
+       formater.printHelp("Usage: fluigi <filename> [-i <initialization_file>] [-o output format]", options);
     }
     
     private static void processCommandline(final CommandLine cl, Options options) throws IllegalArgumentException 
@@ -82,7 +78,7 @@ public class Main {
         }
         * 
         */
-    }
+    //}
     
         
     /**
@@ -97,8 +93,8 @@ public class Main {
     {     
        
         //Fluigi Options
-        final Options options = createCommandLineOptions();
-        CommandLineParser parser = new DefaultParser();
+        //final Options options = createCommandLineOptions();
+        //CommandLineParser parser = new DefaultParser();
         
         //Read in ucf
         Scanner reader = new Scanner(System.in);  // Reading from System.in
