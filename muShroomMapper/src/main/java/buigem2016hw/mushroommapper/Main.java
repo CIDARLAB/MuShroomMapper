@@ -11,6 +11,7 @@ import org.cellocad.BU.netsynth.Utilities;
 import org.json.JSONException;
 import org.apache.commons.cli.Options;
 import org.cidarlab.fluigi.fluigi.Fluigi;
+import static org.cidarlab.fluigi.fluigi.Fluigi.processMintDevice;
 
 /**
  *
@@ -121,7 +122,11 @@ public class Main {
         
         //Create Mint file from netlist graph and parsed ucf
         System.out.println("Creating Mint file output...");
-        CreateMint cm = new CreateMint(nlt, ucf);
-        System.out.println("All done!");
+        Scanner ufNameInput = new Scanner(System.in);  // Reading from System.in
+        System.out.println("What would you like to name your .uf file? ");
+        String fileName = ufNameInput.nextLine(); // Scans the next token of the input as an int.
+        CreateMint cm = new CreateMint(nlt, ucf, fileName);
+        processMintDevice(fileName, "SampleInput/fluigi.ini", "sej");
+        System.out.println("MM is all done!");
     }    
 }

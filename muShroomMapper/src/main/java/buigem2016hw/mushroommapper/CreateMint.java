@@ -24,17 +24,12 @@ import org.json.JSONArray;
 
 public class CreateMint {
     String line = "";
-    String fileName;
     String flowPorts = "";
     //String controlPorts = ""; //control layer to be implemented
     List<String> channelList;
     
     
-    public CreateMint(NetListTransition graph, ParsedUCF ucf) throws UnsupportedEncodingException, FileNotFoundException, JSONException, IOException{
-        //move into main?
-        Scanner ufNameInput = new Scanner(System.in);  // Reading from System.in
-        System.out.println("What would you like to name your .uf file? ");
-        fileName = ufNameInput.nextLine(); // Scans the next token of the input as an int.
+    public CreateMint(NetListTransition graph, ParsedUCF ucf, String fileName) throws UnsupportedEncodingException, FileNotFoundException, JSONException, IOException{
         PrintWriter mintWriter = new PrintWriter(fileName, "UTF-8");
         mintWriter.println("# .uf output by muShroomMapper");
         mintWriter.println("DEVICE testDevice");
@@ -116,7 +111,7 @@ public class CreateMint {
         
         mintWriter.println("");
         mintWriter.println("END LAYER");
-        /*
+        /*  //Got rid of empty control layer due to Fluigi bug which breaks on finding empty control layer
         mintWriter.println("");
         mintWriter.println("LAYER CONTROL");
         //Where control stuff would go
@@ -126,6 +121,5 @@ public class CreateMint {
         mintWriter.println("END LAYER");
         */
         mintWriter.close();
-        processMintDevice(fileName, "SampleInput/fluigi.ini", "sej");
     }
 }
