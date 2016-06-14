@@ -6,11 +6,14 @@
 package buigem2016hw.mushroommapper;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Scanner;
 import org.json.JSONException;
+import static org.cidarlab.fluigi.fluigi.Fluigi.processMintDevice;
+import org.json.JSONArray;
 
 /**
  *  Takes the modified netlist graph and the parsed UCF and creates a Mint file for use in Fluigi
@@ -27,7 +30,7 @@ public class CreateMint {
     List<String> channelList;
     
     
-    public CreateMint(NetListTransition graph, ParsedUCF ucf) throws UnsupportedEncodingException, FileNotFoundException, JSONException{
+    public CreateMint(NetListTransition graph, ParsedUCF ucf) throws UnsupportedEncodingException, FileNotFoundException, JSONException, IOException{
         //move into main?
         Scanner ufNameInput = new Scanner(System.in);  // Reading from System.in
         System.out.println("What would you like to name your .uf file? ");
@@ -53,7 +56,7 @@ public class CreateMint {
             if(port.type.equals("output")){
                 flowPorts+="outPort"+outPortCount;
                 port.mintName = "outPort"+outPortCount;
-                if (outPortCount == (graph.outPorts.size()-1)) flowPorts+=", r=100;";
+                if (outPortCount == (graph.outPorts.size()-1)) flowPorts+=" r=100;";
                 else flowPorts+=",";
                 outPortCount++;
             }
@@ -73,13 +76,47 @@ public class CreateMint {
         }
         int channelCount = 0;
         //adding channels
-        for(MuWire w : graph.wires){
-            mintWriter.println("CHANNEL "+"channel"+channelCount+" from "+ w.fromGate.mintName+" 2 to " +w.toGate.mintName+" 4 w=100;");
+        int wireCount = 0;
+        for(MuWire w : graph.wires)                 //printing channels eg: "CHANNEL channel0 from Device0 2 to Device1 4 w=100;"
+        {                       //TODO: make sure we're not asking MuGates who dont have in/outTerm JSONArrays
+            System.out.println("Wire count = "+wireCount);  //debugging
+            System.out.println("Wire name = "+w.name);
+            System.out.println("Wire type = "+w.type);
+            int currInTerm;
+            int currOutTerm;
+            
+            
+            if (w.fromGate.outTermFlag == true)
+            {
+                currOutTerm = w.fromGate.opInfo.getInt("outputTerms");
+            }
+            else currOutTerm = w.fromGate.outTermVal;
+            
+            if (w.toGate.inTermFlag == true)
+            {                
+                JSONArray inTermsArray = w.toGate.opInfo.getJSONArray("inputTerms");
+                System.out.println("ToGate symbol = "+w.toGate.symbol);
+                System.out.println("ToGate type = "+w.toGate.type);
+                System.out.println("InTermIndex = "+w.toGate.inTermInd);
+                currInTerm = inTermsArray.getInt(w.toGate.inTermInd);
+                w.toGate.inTermInd++;       //incrementing the gate's in terminal index
+            }
+            else currInTerm = w.toGate.inTermVal;
+                        
+            
+            String channelMintLine = "CHANNEL channel"+channelCount+" from ";   //adding "CHANNEL channel0 from " to line
+            channelMintLine += w.fromGate.mintName+" ";                         //adding "Device0 " to line
+            channelMintLine += currOutTerm+" to ";                               //adding "2 to " to line
+            channelMintLine += w.toGate.mintName+" ";                           //adding  "Device1 " to line
+            channelMintLine += currInTerm+" w=100;";                             //adding "4 w=100;" to line
+            mintWriter.println(channelMintLine);                                //printing whole line
             channelCount++;
-        }
+            wireCount++;
+        }                       //TODO: NEED TO MAKE CHANNEL SIZE PARAMETRIC ^^^
         
         mintWriter.println("");
         mintWriter.println("END LAYER");
+        /*
         mintWriter.println("");
         mintWriter.println("LAYER CONTROL");
         //Where control stuff would go
@@ -87,8 +124,8 @@ public class CreateMint {
         mintWriter.println("#To be implemented");
         mintWriter.println("");
         mintWriter.println("END LAYER");
+        */
         mintWriter.close();
+        processMintDevice(fileName, "SampleInput/fluigi.ini", "sej");
     }
 }
-
-
