@@ -11,5 +11,7 @@ package buigem2016hw.mushroommapper;
  * TODO: Define Exit Error Codes (Check fluigi/fluigi/ErrorCodes.java)
  */
 public class ErrorCodes {
-    
+    public static final int NO_ARGS = 1800;
+    public static final int MISSING_ARG_VALUES = 1820;
+    public static final int BAD_ARGS = 1840;   
 }
