@@ -8,7 +8,6 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
-import org.cellocad.BU.netsynth.Utilities;
 import org.json.JSONException;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -23,12 +22,14 @@ import static org.cidarlab.fluigi.fluigi.Fluigi.processMintDevice;
  * To do: Implement Apache Commons CLI` to feed muShroomMapper arguments via
  * Node Command Line
  */
-public class Main {
+public class Main 
+{
 
     private static String lfrFilePath = null;
     private static String ucfFilePath = null;
 
-    private static Options createCommandLineOptions() {
+    private static Options createCommandLineOptions() 
+    {
         final Options options = new Options();
         options.addOption("l", "lfr", true, "give lfr filepath (.v)");
         options.addOption("u", "ucf", true, "give ucf filepath (.json)");
@@ -52,23 +53,28 @@ public class Main {
      */
     private static void processCommandLine(final CommandLine cl, Options options) {
 
-        if ((null != cl) && cl.hasOption("lfr")) {
+        if ((null != cl) && cl.hasOption("lfr")) 
+        {
             lfrFilePath = cl.getOptionValue("lfr");
-            if (null == lfrFilePath) {
+            if (null == lfrFilePath) 
+            {
                 System.exit(ErrorCodes.MISSING_ARG_VALUES);
             }
         }
 
-        if ((null != cl) && cl.hasOption("ucf")) {
+        if ((null != cl) && cl.hasOption("ucf")) 
+        {
             ucfFilePath = cl.getOptionValue("ucf");
-            if (null == ucfFilePath) {
+            if (null == ucfFilePath) 
+            {
                 System.exit(ErrorCodes.MISSING_ARG_VALUES);
             }
         }
     }
 
     /**
-     * //this from fluigi CLI private static String outputFormat = "DEFAULT";
+     * //this from fluigi CLI 
+     * private static String outputFormat = "DEFAULT";
      * private static String paramPathName = null;      *
      * private static void outputCommandLineHelp(final Options options) { final
      * HelpFormatter formater = new HelpFormatter(); formater.printHelp("Usage:
@@ -98,6 +104,7 @@ public class Main {
      *
      */
     //} 
+    
     /**
      * @param args the command line arguments
      * @throws java.io.IOException
@@ -105,7 +112,8 @@ public class Main {
      * @throws org.json.JSONException
      * @throws buigem2016hw.mushroommapper.Exceptions
      */
-    public static void main(String[] args) throws IOException, FileNotFoundException, JSONException, Exceptions {
+    public static void main(String[] args) throws IOException, FileNotFoundException, JSONException, Exceptions 
+    {
 
         //Fluigi Options
         final Options options = createCommandLineOptions();
@@ -127,7 +135,8 @@ public class Main {
                 }
         }
 
-        if (null != ucfFilePath && null != lfrFilePath) {
+        if (null != ucfFilePath && null != lfrFilePath) 
+        {
             //Read in ucf
             //Scanner reader = new Scanner(System.in);  // Reading from System.in
             //System.out.println("Enter path/to/UCFFile: ");
@@ -159,6 +168,7 @@ public class Main {
             CreateMint cm = new CreateMint(nlt, ucf, fileName);
             processMintDevice(fileName, "SampleInput/fluigi.ini", "sej");
             System.out.println("MM is all done!");
+            System.exit(0);
         }
     }
 }
