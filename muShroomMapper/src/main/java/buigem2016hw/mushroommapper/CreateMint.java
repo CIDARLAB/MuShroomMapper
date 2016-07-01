@@ -20,6 +20,7 @@ import org.json.JSONArray;
 public class CreateMint {
     String line = "";
     String flowPorts = "";
+    String controlPorts = "";
     //String controlPorts = ""; //control layer to be implemented
     List<String> channelList;
     
@@ -31,14 +32,25 @@ public class CreateMint {
         mintWriter.println("");
         mintWriter.println("LAYER FLOW");
         mintWriter.println("");
-        int inPortCount = 0;
+        int flowInPortCount = 0;
+        int controlInPortCount = 0;
         int outPortCount = 0;
         //adding inports
         for(MuGate port:graph.gates){
-            if(port.type.equals("input")){
-                flowPorts+="inPort"+inPortCount+",";
-                port.mintName = "inPort"+inPortCount;
-                inPortCount++;
+            if(port.type.equals("input"))
+            {
+                if(port.opInfo.get("layer").equals("flow"))
+                {
+                    flowPorts += "flowInPort" + flowInPortCount + ",";
+                    port.mintName = "flowInPort" + flowInPortCount;
+                    flowInPortCount++;
+                }               
+                else
+                {
+                    controlPorts += "controlInPort"+controlInPortCount+",";
+                    port.mintName = "controlInPort"+controlInPortCount;
+                    controlInPortCount++;
+                }
             }
         }
         //adding outports
@@ -51,7 +63,7 @@ public class CreateMint {
                 outPortCount++;
             }
         }
-        mintWriter.println("PORT " + flowPorts);
+        mintWriter.println("PORT " + flowPorts);        //printing out all flow ports to mint file
         //adding devices
         int deviceCount = 0;
         for (MuGate mg:graph.gates){
@@ -106,15 +118,13 @@ public class CreateMint {
         
         mintWriter.println("");
         mintWriter.println("END LAYER");
-        /*  //Got rid of empty control layer due to Fluigi bug which breaks on finding empty control layer
         mintWriter.println("");
         mintWriter.println("LAYER CONTROL");
-        //Where control stuff would go
         mintWriter.println("");
-        mintWriter.println("#To be implemented");
+        mintWriter.println("PORT " + controlPorts);             //printing control ports to mint file
         mintWriter.println("");
         mintWriter.println("END LAYER");
-        */
+        
         mintWriter.close();
     }
 }
