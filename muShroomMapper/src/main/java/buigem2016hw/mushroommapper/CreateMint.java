@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-import java.util.Scanner;
 import org.json.JSONException;
-import static org.cidarlab.fluigi.fluigi.Fluigi.processMintDevice;
 import org.json.JSONArray;
 
 /**
@@ -21,7 +19,6 @@ public class CreateMint {
     String line = "";
     String flowPorts = "";
     String controlPorts = "";
-    //String controlPorts = ""; //control layer to be implemented
     List<String> channelList;
     
     
@@ -32,15 +29,21 @@ public class CreateMint {
         mintWriter.println("");
         mintWriter.println("LAYER FLOW");
         mintWriter.println("");
+        
+        //initializing counters
         int flowInPortCount = 0;
         int controlInPortCount = 0;
         int outPortCount = 0;
-        //adding inports
-        for(MuGate port:graph.gates){
+        int deviceCount = 0;  
+        int channelCount = 0;        
+        
+        //concatenating flow and control inports
+        for(MuGate port:graph.gates)
+        {
             if(port.type.equals("input"))
             {
                 if(port.opInfo.get("layer").equals("flow"))
-                {
+                {   //creating flow inports
                     flowPorts += "flowInPort" + flowInPortCount + ",";
                     port.mintName = "flowInPort" + flowInPortCount;
                     flowInPortCount++;
@@ -53,9 +56,11 @@ public class CreateMint {
                 }
             }
         }
-        //adding outports
-        for (MuGate port:graph.gates){
-            if(port.type.equals("output")){
+        //concatenating flow outports
+        for (MuGate port:graph.gates)
+        {
+            if(port.type.equals("output"))
+            {
                 flowPorts+="outPort"+outPortCount;
                 port.mintName = "outPort"+outPortCount;
                 if (outPortCount == (graph.outPorts.size()-1)) flowPorts+=" r=100;";
@@ -63,31 +68,28 @@ public class CreateMint {
                 outPortCount++;
             }
         }
-        mintWriter.println("PORT " + flowPorts);        //printing out all flow ports to mint file
+        mintWriter.println("PORT " + flowPorts);        //printing out concatenated flow ports to mint file
         //adding devices
-        int deviceCount = 0;
+
         for (MuGate mg:graph.gates){
-            if (mg.type.equals("gate")){
+            if (mg.type.equals("gate"))
+            {
                 String mint = mg.opInfo.get("mint") + ";";
                 mint = mint.replaceAll("NAME", "Device"+deviceCount);
                 mg.mintName = "Device"+deviceCount;
                 //System.out.println(mg.primitive.mintSyntax);
                 mintWriter.println(mint);
+                mg.isWritten = true;
                 deviceCount++;
             }
         }
-        int channelCount = 0;
+
         //adding channels
-        int wireCount = 0;
         for(MuWire w : graph.wires)                 //printing channels eg: "CHANNEL channel0 from Device0 2 to Device1 4 w=100;"
         {                       //TODO: make sure we're not asking MuGates who dont have in/outTerm JSONArrays
-            System.out.println("Wire count = "+wireCount);  //debugging
-            System.out.println("Wire name = "+w.name);
-            System.out.println("Wire type = "+w.type);
             int currInTerm;
             int currOutTerm;
-            
-            
+                      
             if (w.fromGate.outTermFlag == true)
             {
                 currOutTerm = w.fromGate.opInfo.getInt("outputTerms");
@@ -97,9 +99,6 @@ public class CreateMint {
             if (w.toGate.inTermFlag == true)
             {                
                 JSONArray inTermsArray = w.toGate.opInfo.getJSONArray("inputTerms");
-                System.out.println("ToGate symbol = "+w.toGate.symbol);
-                System.out.println("ToGate type = "+w.toGate.type);
-                System.out.println("InTermIndex = "+w.toGate.inTermInd);
                 currInTerm = inTermsArray.getInt(w.toGate.inTermInd);
                 w.toGate.inTermInd++;       //incrementing the gate's in terminal index
             }
@@ -112,8 +111,8 @@ public class CreateMint {
             channelMintLine += w.toGate.mintName+" ";                           //adding  "Device1 " to line
             channelMintLine += currInTerm+" w=100;";                             //adding "4 w=100;" to line
             mintWriter.println(channelMintLine);                                //printing whole line
+            w.isWritten = true;                                                 //marking wire as printed
             channelCount++;
-            wireCount++;
         }                       //TODO: NEED TO MAKE CHANNEL SIZE PARAMETRIC ^^^
         
         mintWriter.println("");
@@ -121,7 +120,7 @@ public class CreateMint {
         mintWriter.println("");
         mintWriter.println("LAYER CONTROL");
         mintWriter.println("");
-        mintWriter.println("PORT " + controlPorts);             //printing control ports to mint file
+        mintWriter.println("PORT " + controlPorts);             //printing control ports to mint file... could for through and mark control ports printed here?
         mintWriter.println("");
         mintWriter.println("END LAYER");
         
