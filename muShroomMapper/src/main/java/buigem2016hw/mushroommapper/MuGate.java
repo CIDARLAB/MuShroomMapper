@@ -27,6 +27,7 @@ public class MuGate extends DGate
     public int outTermVal = 2;      //by default output terminal is 2nd orientation (right)
     public boolean inTermFlag = false;      //flag that is true if inTerm JSONArray exists
     public boolean outTermFlag = false;     //flag that is true if outTerm JSONArray exists
+    public boolean isWritten = false;
         
     public MuGate(String type, String wireName)
     {

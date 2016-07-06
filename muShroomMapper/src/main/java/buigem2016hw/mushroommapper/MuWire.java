@@ -19,6 +19,7 @@ public class MuWire {
     public MuGate fromGate;
     public MuGate toGate;
     public String type;
+    public boolean isWritten = false;
 
     public MuWire(String wireName){
         name=wireName;
