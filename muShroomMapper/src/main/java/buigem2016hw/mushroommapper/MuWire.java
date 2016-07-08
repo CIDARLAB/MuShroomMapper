@@ -6,6 +6,7 @@
 package buigem2016hw.mushroommapper;
 
 import org.cellocad.BU.dom.DGate;
+import org.cellocad.BU.dom.DWire;
 
 /**
  *
@@ -14,7 +15,7 @@ import org.cellocad.BU.dom.DGate;
 
 //To do: Convert to extending DWire? For Sure
 
-public class MuWire {
+public class MuWire extends DWire {
     public String name;
     public MuGate fromGate;
     public MuGate toGate;
