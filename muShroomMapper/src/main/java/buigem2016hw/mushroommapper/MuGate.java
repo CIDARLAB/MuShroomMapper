@@ -25,21 +25,23 @@ public class MuGate extends DGate
     public int outTermInd;      //current index of outTerm JSONArray
     public int inTermVal = 4;       //by default input terminal is 4th orientation (left) EG: *** ----->IN[(Device)]OUT-----> ***
     public int outTermVal = 2;      //by default output terminal is 2nd orientation (right)
-    public boolean inTermFlag = false;      //flag that is true if inTerm JSONArray exists
-    public boolean outTermFlag = false;     //flag that is true if outTerm JSONArray exists
+    public boolean inTermFlag = false;      //flag that is true if inTerm JSONArray exists (used for gates with nonstandard orientations)
+    public boolean outTermFlag = false;     //flag that is true if outTerm JSONArray exists (used for gates with nonstandard orientations)
     public boolean isWritten = false;
+    public List<MuWire> muInput;
+    public MuWire muOutput;
         
-    public MuGate(String type, String wireName)
+    public MuGate(String type, String wireName) //
     {
         this.type = type;
         this.ioWire = wireName;
         this.symbol = "0";
     }
-    public MuGate(DGate dg, String type)
+    public MuGate(DGate dg, String type)    //conversion from DGate
     {
         symbol = dg.symbol;
-        output = dg.output;
-        input = dg.input;
+        output = dg.output;         //the output wire of the gate
+        input = dg.input;           //list of input wires to the gate
         gname = dg.gname;
         gindex = dg.gindex;
         gatestage = dg.gatestage;
@@ -49,7 +51,7 @@ public class MuGate extends DGate
         this.type=type;
     }
     
-    public void addOpInfo(JSONObject JSONInput)
+    public void addOpInfo(JSONObject JSONInput) //linking JSON info
     {
         opInfo = JSONInput;
     }
