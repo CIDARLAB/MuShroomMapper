@@ -5,7 +5,6 @@
  */
 package buigem2016hw.mushroommapper;
 
-import org.cellocad.BU.dom.DGate;
 import org.cellocad.BU.dom.DWire;
 
 /**

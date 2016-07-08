@@ -69,17 +69,17 @@ public class CreateMint {
             }
         }
         mintWriter.println("PORT " + flowPorts);        //printing out concatenated flow ports to mint file
+        
         //adding devices
-
-        for (MuGate mg:graph.gates){
+        for (MuGate mg:graph.gates)
+        {
             if (mg.type.equals("gate"))
             {
                 String mint = mg.opInfo.get("mint") + ";";
-                mint = mint.replaceAll("NAME", "Device"+deviceCount);
-                mg.mintName = "Device"+deviceCount;
-                //System.out.println(mg.primitive.mintSyntax);
-                mintWriter.println(mint);
-                mg.isWritten = true;
+                mint = mint.replaceAll("NAME", "Device"+deviceCount+mg.opInfo.getString("name"));
+                mg.mintName = "Device"+deviceCount+mg.opInfo.getString("name");
+                mintWriter.println(mint);               //printing out mF gate
+                mg.isWritten = true;                    //tagging gate as printed
                 deviceCount++;
             }
         }
@@ -113,7 +113,7 @@ public class CreateMint {
             mintWriter.println(channelMintLine);                                //printing whole line
             w.isWritten = true;                                                 //marking wire as printed
             channelCount++;
-        }                       //TODO: NEED TO MAKE CHANNEL SIZE PARAMETRIC ^^^
+        }                       //TODO: NEED TO MAKE CHANNEL SIZE PARAMETRIC ^^^ <---GUI controlled sizing?
         
         mintWriter.println("");
         mintWriter.println("END LAYER");
