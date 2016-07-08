@@ -133,7 +133,7 @@ public class NetListTransition
             {
                 for (MuWire input:gate.muInput)
                 {
-                    if(input.wtype.equals("fchan") || input.wtype.equals("finput")) 
+                    if(input.wtype.equals("fchan") || input.wtype.equals("finput")) //TODO: needs work
                     {
                         
                         gate.muOutput.isWritten = true;
