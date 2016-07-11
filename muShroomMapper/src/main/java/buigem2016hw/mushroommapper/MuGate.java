@@ -5,7 +5,6 @@
  */
 package buigem2016hw.mushroommapper;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.cellocad.BU.dom.DGate;
 import org.json.JSONObject;
