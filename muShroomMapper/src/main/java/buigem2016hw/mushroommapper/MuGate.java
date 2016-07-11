@@ -17,6 +17,7 @@ public class MuGate extends DGate
 {
     public JSONObject opInfo;   //from UCF, contains all info regarding the microfluidic operation the gate performs
     public String type;
+    public String layer;
     public String ioWire;
     public int io;
     public String mintName;         //name used for this gate in mint file

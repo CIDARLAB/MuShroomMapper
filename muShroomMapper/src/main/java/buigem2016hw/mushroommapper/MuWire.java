@@ -14,19 +14,27 @@ import org.cellocad.BU.dom.DWire;
 
 //To do: Convert to extending DWire? For Sure
 
-public class MuWire extends DWire {
-    public String name;
+public class MuWire extends DWire 
+{
     public MuGate fromGate;
     public MuGate toGate;
     public String type;
     public boolean isWritten = false;
     public MuWire dupChannel;
+    public String layer;
 
-    public MuWire(String wireName){
+    public MuWire(DWire dw)
+    {
+        this.wtype = dw.wtype;
+        this.name = dw.name;
+    }
+    public MuWire(String wireName)
+    {
         name=wireName;
         type = "connector";
     }
-    public MuWire(String wireName, int io, MuGate ioGate){
+    public MuWire(String wireName, int io, MuGate ioGate)
+    {
         if (io == 0) {
             fromGate = ioGate;
             type = "input";
@@ -37,10 +45,12 @@ public class MuWire extends DWire {
         }
         name=wireName;
     }
-    public void setOrigin(MuGate originGate){
+    public void setOrigin(MuGate originGate)
+    {
         fromGate = originGate;
     }
-    public void setDestination(MuGate destGate){
+    public void setDestination(MuGate destGate)
+    {
         toGate = destGate;
     }
 }

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.cellocad.BU.dom.DGate;
 import org.cellocad.BU.dom.DWire;
+import org.cellocad.BU.dom.DWireType;
 import org.cellocad.BU.fluigi.VerilogFluigiGrammar;
 import org.cellocad.BU.fluigi.VerilogFluigiWalker;
 import org.cellocad.BU.netsynth.Utilities;
@@ -18,9 +19,6 @@ import org.cellocad.BU.netsynth.Utilities;
  * creates our graph object from the output of NetSynth (parsed Verilog)
  */
 
-/**To do:
- * Note the wires that are split apart by a valve
-*/
 public class NetListTransition 
 {
     public String filepath;
@@ -38,7 +36,6 @@ public class NetListTransition
         walker = VerilogFluigiGrammar.getuFWalker(line);
         inPorts = walker.details.inputs;                //create list of in ports from inputList command
         outPorts = walker.details.outputs;              //create list of out ports from outputList command
-        //create list of channels from wiresList command
         int gateCount=0;            //counts the number of gates throughout for use with IDing gates for visualization
         for(DGate dg:walker.netlist)                    //translating all operation gates as MuGates
         {
@@ -58,7 +55,7 @@ public class NetListTransition
             wires.add(new MuWire(wireName));
             System.out.println(wireName);
         }
-        for(String wireName:walker.details.inputs)      //translating all inputs as both input MuGates and connecting MuWires
+        for(String wireName:walker.details.inputs)      //translating all inputs as both input MuGates and connecting MuWires   TODO: Clean this up
         {
             MuGate in = new MuGate("input", wireName);  //the MuGate for the inport
             MuWire w = new MuWire(wireName, 0, in);     //the MuWire coming out of the inport
@@ -70,7 +67,7 @@ public class NetListTransition
             gateCount++;
             //System.out.println(wireName);
         }
-        for(String wireName:walker.details.outputs)     //translating all outputs as both output MuGates and connecting MuWires
+        for(String wireName:walker.details.outputs)     //translating all outputs as both output MuGates and connecting MuWires TODO: Clean this up
         {
             MuGate out = new MuGate("output", wireName);//the MuGate for the outport
             wires.add(new MuWire(wireName, 1 , out));   //the MuWire off the outport
@@ -87,10 +84,10 @@ public class NetListTransition
 
 
     }
-    public void parseNetList()
+    public void parseNetList()      //TODO: could be cleaned up
     {
 
-        //filling out MuWire objects
+        //filling out MuWire objects by wirename
         for(MuWire wire:wires)                                                      //goes through all wires
         {
             for(MuGate gate:gates)                                                  //goes through all gates
@@ -99,19 +96,35 @@ public class NetListTransition
                 {
                     for(DWire input:gate.input)                                     //for through all inputs of the gate
                     {
-                        if(wire.name.equals(input.name)) wire.setDestination(gate); //if input wire is input to the gate, set gate as wire's toGate
+                        if(wire.name.equals(input.name))    //if input wire is input to the gate, set gate as wire's toGate
+                        {
+                            wire.setDestination(gate);
+                            wire.wtype = input.wtype;
+                        } 
                     }
                 }
                 else if("output".equals(wire.type))                                 //if wire is an output wire
                 {
-                    if(wire.name.equals(gate.output.name)) wire.setOrigin(gate);    //if output wire is output of the gate, set gate as wire's fromGate
+                    if(wire.name.equals(gate.output.name))  //if output wire is output of the gate, set gate as wire's fromGate 
+                    {
+                        wire.setOrigin(gate);
+                        wire.wtype = gate.output.wtype;
+                    }   
                 }
                 else                                                                //if wire isn't an input/output wire
                 {  
-                    if(wire.name.equals(gate.output.name)) wire.setOrigin(gate);    //if wire is output of gate, set gate as wire's fromGate
+                    if(wire.name.equals(gate.output.name))  //if wire is output of gate, set gate as wire's fromGate
+                    {
+                        wire.setOrigin(gate);
+                        wire.wtype = gate.output.wtype;
+                    }    
                     else for(DWire input:gate.input)                                //if not output of gate, go through all inputs of gate 
                     {
-                        if(wire.name.equals(input.name)) wire.setDestination(gate); //if wire is an input of the gate, set gate as wire's toGate
+                        if(wire.name.equals(input.name))    //if wire is an input of the gate, set gate as wire's toGate
+                        {
+                            wire.setDestination(gate);
+                            wire.wtype = input.wtype;
+                        } 
                     }
                 }
             }
@@ -141,5 +154,27 @@ public class NetListTransition
                 }
             }
         }
+    }
+    public void setLayers()
+    {
+        for (MuWire wire:wires)
+        {
+            DWireType dwt = wire.wtype;
+            switch(dwt)
+            {
+                case cinput:
+                //case cconnector:      //not yet implemented in NetSynth
+                    wire.layer = "control";
+                    break;
+                case finput:
+                //case fconnector:      //not yet implemented in NetSynth
+                    wire.layer = "flow";
+                    break;
+                default:
+                    System.out.println("Unidentified channel layer!");
+                    System.out.println("wire name: " + wire.name);
+                    break;
+            }          
+        }  
     }
 }
