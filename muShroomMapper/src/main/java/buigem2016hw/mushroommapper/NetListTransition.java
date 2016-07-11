@@ -135,7 +135,7 @@ public class NetListTransition
                 {
                     if(input.wtype.equals("fchan") || input.wtype.equals("finput")) //TODO: needs work
                     {
-                        
+                        input.dupChannel = gate.muOutput;   //for identifying duplicate channel from valve
                         gate.muOutput.isWritten = true;
                     }
                 }
