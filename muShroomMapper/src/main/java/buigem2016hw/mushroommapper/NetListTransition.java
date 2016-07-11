@@ -118,7 +118,7 @@ public class NetListTransition
         }      
     }
     
-    public void combineValveChannels()      //getting rid of duplicate channels made by a valve splitting up a flow channel into input and output
+    public void combineValveChannels()      //identifying duplicate channels made by a valve splitting up a flow channel into input and output
     {
         for(MuGate gate:gates)
         {

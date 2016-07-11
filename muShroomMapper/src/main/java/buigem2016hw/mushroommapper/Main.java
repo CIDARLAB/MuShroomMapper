@@ -24,7 +24,6 @@ import static org.cidarlab.fluigi.fluigi.Fluigi.processMintDevice;
  */
 public class Main 
 {
-
     private static String lfrFilePath = null;
     private static String ucfFilePath = null;
 
@@ -37,73 +36,20 @@ public class Main
         return options;
     }
 
-    /*  //reference fluigi options
-    private static Options createCommandLineOptions() {
-        final Options options = new Options();
-        
-        // * Fluigi Options
-        options.addOption("i", "init", true, "Give the initialization (*.ini) file, 3D initalization (*_3d.ini) file.");
-        options.addOption("o", "out", true, "Specify output format (json,eps,svg)");
-        options.addOption("h", "help", false, "Show help information.");
-        options.addOption("v", "hdl", false, "This enables the verilog file input mode flag");
-        options.addOption("d", "debug", false, "This enables all the debug printing");
-        
-        return options;
-    }
-     */
     private static void processCommandLine(final CommandLine cl, Options options) {
 
         if ((null != cl) && cl.hasOption("lfr")) 
         {
             lfrFilePath = cl.getOptionValue("lfr");
-            if (null == lfrFilePath) 
-            {
-                System.exit(ErrorCodes.MISSING_ARG_VALUES);
-            }
+            if (null == lfrFilePath) System.exit(ErrorCodes.MISSING_ARG_VALUES);
         }
 
         if ((null != cl) && cl.hasOption("ucf")) 
         {
             ucfFilePath = cl.getOptionValue("ucf");
-            if (null == ucfFilePath) 
-            {
-                System.exit(ErrorCodes.MISSING_ARG_VALUES);
-            }
+            if (null == ucfFilePath) System.exit(ErrorCodes.MISSING_ARG_VALUES);
         }
     }
-
-    /**
-     * //this from fluigi CLI 
-     * private static String outputFormat = "DEFAULT";
-     * private static String paramPathName = null;      *
-     * private static void outputCommandLineHelp(final Options options) { final
-     * HelpFormatter formater = new HelpFormatter(); formater.printHelp("Usage:
-     * fluigi <filename> [-i <initialization_file>] [-o output format]",
-     * options); }
-     *
-     * private static void processCommandline(final CommandLine cl, Options
-     * options) throws IllegalArgumentException { /** Fluigi processCommandline
-     * String inputPathName = cl.getArgs()[0];
-     *
-     * System.out.println(inputPathName);
-     *
-     * if ((null != cl) && cl.hasOption("init")) { paramPathName =
-     * cl.getOptionValue("init"); if (null == paramPathName) {
-     * System.exit(ErrorCodes.MISSING_ARG_VALUES); } }
-     *
-     * if ((null != cl) && cl.hasOption("out")) { outputFormat =
-     * cl.getOptionValue("out").toLowerCase(); if (null == outputFormat) {
-     * System.exit(ErrorCodes.MISSING_ARG_VALUES); } }
-     *
-     * verilogInputFlag = cl.hasOption("hdl");
-     *
-     * isDebugPrintEnabled = cl.hasOption("debug");
-     *
-     * if ((null != cl) && cl.hasOption("help")) {
-     * outputCommandLineHelp(options); }
-     *
-     */
-    //} 
     
     /**
      * @param args the command line arguments
@@ -137,7 +83,7 @@ public class Main
 
         if (null != ucfFilePath && null != lfrFilePath) 
         {
-            //Read in ucf
+        //Read in ucf
             //Scanner reader = new Scanner(System.in);  // Reading from System.in
             //System.out.println("Enter path/to/UCFFile: ");
             //String ucfPath = reader.nextLine(); // reads in filepath
@@ -145,26 +91,26 @@ public class Main
             //System.out.println("Reading UCF...");
             ParsedUCF ucf = new ParsedUCF(ucfFilePath);
 
-            //Read Verilog + Make Graph
+        //Read Verilog + Make Graph
             //System.out.println("Enter path/to/VerilogFile: ");
             //String vPath = reader.nextLine(); // reads in filepath
             //String vPath = "SampleInput/sample.v";          //temp path for debugging
             //System.out.println("Reading Verilog...");
             NetListTransition nlt = new NetListTransition(ucf, lfrFilePath);
 
-            //Create JGraphX from netlist Graph while error checking
+        //Create JGraphX from netlist Graph while error checking
             System.out.println("Creating JGraphX, error checking...");
             GraphTranslation gt = new GraphTranslation(nlt, ucf);
 
-            // create a visualization using JGraphX
+        //create a visualization using JGraphX
             Visualization v = new Visualization();
             v.display(gt.jgraphx);
 
-            //Create Mint file from netlist graph and parsed ucf
+        //Create Mint file from netlist graph and parsed ucf
             System.out.println("Creating Mint file output...");
-            Scanner ufNameInput = new Scanner(System.in);  // Reading from System.in
+            Scanner ufNameInput = new Scanner(System.in);  //Reading from System.in
             System.out.println("What would you like to name your .uf file? ");
-            String fileName = ufNameInput.nextLine(); // Scans the next token of the input as an int.
+            String fileName = ufNameInput.nextLine();
             CreateMint cm = new CreateMint(nlt, ucf, fileName);
             processMintDevice(fileName, "SampleInput/fluigi.ini", "sej");
             System.out.println("MM is all done!");
