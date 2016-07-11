@@ -85,11 +85,14 @@ public class CreateMint {
         }
 
         //adding channels
-        for(MuWire w : graph.wires)                 //printing channels eg: "CHANNEL channel0 from Device0 2 to Device1 4 w=100;"
-        {                       //TODO: make sure we're not asking MuGates who dont have in/outTerm JSONArrays
-            int currInTerm;
-            int currOutTerm;
-                      
+        String controlChannels = "";
+        for(MuWire w : graph.wires)                 //printing flow channels eg: "CHANNEL flowchannel0 from Device0 2 to Device1 4 w=100;"
+        {
+            if (w.isWritten == true) continue;      //skip any duplicate channels
+            else if (w.dupChannel != null) w.setDestination(w.dupChannel.toGate);   //combining the duplicate channel from any valve-gates
+                
+            int currInTerm;                         //checking which terminal to use for channel printing
+            int currOutTerm;        
             if (w.fromGate.outTermFlag == true)
             {
                 currOutTerm = w.fromGate.opInfo.getInt("outputTerms");
@@ -104,15 +107,27 @@ public class CreateMint {
             }
             else currInTerm = w.toGate.inTermVal;
                         
-            
-            String channelMintLine = "CHANNEL channel"+channelCount+" from ";   //adding "CHANNEL channel0 from " to line
-            channelMintLine += w.fromGate.mintName+" ";                         //adding "Device0 " to line
-            channelMintLine += currOutTerm+" to ";                               //adding "2 to " to line
-            channelMintLine += w.toGate.mintName+" ";                           //adding  "Device1 " to line
-            channelMintLine += currInTerm+" w=100;";                             //adding "4 w=100;" to line
-            mintWriter.println(channelMintLine);                                //printing whole line
-            w.isWritten = true;                                                 //marking wire as printed
-            channelCount++;
+            if (w.type.equals("fchan") || w.type.equals("finput"))
+            {
+                String channelMintLine = "CHANNEL flowchannel"+channelCount+" from ";   //adding "CHANNEL flowchannel0 from " to line
+                channelMintLine += w.fromGate.mintName+" ";                         //adding "Device0 " to line
+                channelMintLine += currOutTerm+" to ";                               //adding "2 to " to line
+                channelMintLine += w.toGate.mintName+" ";                           //adding  "Device1 " to line
+                channelMintLine += currInTerm+" w=100;";                             //adding "4 w=100;" to line
+                mintWriter.println(channelMintLine);                                //printing whole line
+                w.isWritten = true;                                                 //marking wire as printed
+                channelCount++;
+            }
+            else if (w.type.equals("cchan") || w.type.equals("cinput"))
+            {
+                controlChannels += "\nCHANNEL controlchannel"+channelCount+" from ";   //adding "CHANNEL flowchannel0 from " to line
+                controlChannels += w.fromGate.mintName+" ";                         //adding "Device0 " to line
+                controlChannels += currOutTerm+" to ";                               //adding "2 to " to line
+                controlChannels += w.toGate.mintName+" ";                           //adding  "Device1 " to line
+                controlChannels += currInTerm+" w=100;\n";                             //adding "4 w=100;" to line
+                w.isWritten = true;                                                 //marking wire as printed
+                channelCount++;  
+            }
         }                       //TODO: NEED TO MAKE CHANNEL SIZE PARAMETRIC ^^^ <---GUI controlled sizing?
         
         mintWriter.println("");
@@ -121,6 +136,8 @@ public class CreateMint {
         mintWriter.println("LAYER CONTROL");
         mintWriter.println("");
         mintWriter.println("PORT " + controlPorts);             //printing control ports to mint file... could for through and mark control ports printed here?
+        //print control gates
+        mintWriter.println(controlChannels);
         mintWriter.println("");
         mintWriter.println("END LAYER");
         
