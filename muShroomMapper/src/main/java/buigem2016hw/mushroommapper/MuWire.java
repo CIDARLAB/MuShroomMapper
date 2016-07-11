@@ -20,6 +20,7 @@ public class MuWire extends DWire {
     public MuGate toGate;
     public String type;
     public boolean isWritten = false;
+    public MuWire dupChannel;
 
     public MuWire(String wireName){
         name=wireName;
