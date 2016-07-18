@@ -22,7 +22,6 @@ public class MuWire extends DWire
 //    public boolean isWritten = false;
 //    public MuWire dupChannel;
 //    public String layer;
-
 //    public MuWire(DWire dw)
 //    {
 //        this.wtype = dw.wtype;
