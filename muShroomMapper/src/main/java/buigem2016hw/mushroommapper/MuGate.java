@@ -15,25 +15,24 @@ import org.json.JSONObject;
  */
 public class MuGate extends DGate
 {
-    public JSONObject opInfo;   //from UCF, contains all info regarding the microfluidic operation the gate performs
+//    public JSONObject opInfo;   //from UCF, contains all info regarding the microfluidic operation the gate performs
     public String type;
-    public String layer;
+//    public String layer;
     public String ioWire;
     public int io;
-    public String mintName;         //name used for this gate in mint file
-    public int inTermInd;       //current index of inTerm JSONArray
-    public int outTermInd;      //current index of outTerm JSONArray
-    public int inTermVal = 4;       //by default input terminal is 4th orientation (left) EG: *** ----->IN[(Device)]OUT-----> ***
-    public int outTermVal = 2;      //by default output terminal is 2nd orientation (right)
-    public boolean inTermFlag = false;      //flag that is true if inTerm JSONArray exists (used for gates with nonstandard orientations)
-    public boolean outTermFlag = false;     //flag that is true if outTerm JSONArray exists (used for gates with nonstandard orientations)
-    public boolean isWritten = false;
+//    public String mintName;         //name used for this gate in mint file
+//    public int inTermInd;       //current index of inTerm JSONArray
+//    public int outTermInd;      //current index of outTerm JSONArray
+//    public int inTermVal = 4;       //by default input terminal is 4th orientation (left) EG: *** ----->IN[(Device)]OUT-----> ***
+//    public int outTermVal = 2;      //by default output terminal is 2nd orientation (right)
+//    public boolean inTermFlag = false;      //flag that is true if inTerm JSONArray exists (used for gates with nonstandard orientations)
+//    public boolean outTermFlag = false;     //flag that is true if outTerm JSONArray exists (used for gates with nonstandard orientations)
+//    public boolean isWritten = false;
     public List<MuWire> muInput;
     public MuWire muOutput;
         
     public MuGate(String type, String wireName) //
     {
-        this.type = type;
         this.ioWire = wireName;
         this.symbol = "0";
     }
