@@ -49,7 +49,6 @@ public class MuGate extends DGate
 //        outTermInd = 0;
 //        this.type=type;
 //    }
-    
 //    public void addOpInfo(JSONObject JSONInput) //linking JSON info
 //    {
 //        opInfo = JSONInput;
