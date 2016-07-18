@@ -8,11 +8,14 @@ package buigem2016hw.mushroommapper;
 import java.util.ArrayList;
 import java.util.List;
 import org.cellocad.BU.dom.DGate;
+import org.cellocad.BU.dom.DGateType;
 import org.cellocad.BU.dom.DWire;
 import org.cellocad.BU.dom.DWireType;
+import org.cellocad.BU.dom.LayerType;
 import org.cellocad.BU.fluigi.VerilogFluigiGrammar;
 import org.cellocad.BU.fluigi.VerilogFluigiWalker;
 import org.cellocad.BU.netsynth.Utilities;
+import org.json.JSONException;
 
 /**
  * @author Shane
@@ -29,60 +32,96 @@ public class NetListTransition
     public List<MuWire> wires = new ArrayList<>();
     public List<MuGate> gates = new ArrayList<>();
        
-    public NetListTransition(ParsedUCF ucf, String vFilePath)
+    public NetListTransition(ParsedUCF ucf, String vFilePath) throws JSONException
     {
         line = "";
         line = Utilities.getFileContentAsString(vFilePath);
         walker = VerilogFluigiGrammar.getuFWalker(line);
         inPorts = walker.details.inputs;                //create list of in ports from inputList command
         outPorts = walker.details.outputs;              //create list of out ports from outputList command
-        int gateCount=0;            //counts the number of gates throughout for use with IDing gates for visualization
-        for(DGate dg:walker.netlist)                    //translating all operation gates as MuGates
+        int gateCount=0;           //counts the number of gates throughout for use with IDing gates for visualization
+//        for(DGate dg:walker.netlist)                    //translating all operation gates as MuGates
+//        {
+//            MuGate opGate = new MuGate(dg, "gate");
+//            gates.add(opGate);
+//        }
+        for(DGate dg:walker.netlist)
         {
-            MuGate opGate = new MuGate(dg, "gate");
-            gates.add(opGate);
-            opGate.gindex = gateCount;
-            gateCount++;
+            switch(dg.gtype)
+            {
+                case uF:
+                    dg.opInfo = ucf.opMap.get(dg.symbol);   //adding UCF-operator info to each operation gate
+                    
+                    if (dg.opInfo.getString("layer").equals("flow")) dg.layer = LayerType.flow;                 //filling out layer of uF operation gates
+                    else if (dg.opInfo.getString("layer").equals("control")) dg.layer = LayerType.control;
+                    else System.out.println("Operator " + dg.symbol + " without layer attribute! Check UCF!");
+                    
+                    dg.inTermFlag = true;                   //these operation gates will have their in/outTerm JSONArrays defined in their opInfo
+                    dg.outTermFlag = true;
+                    
+                    dg.output.fromGate = dg;
+                    for (DWire in:dg.input)
+                    {
+                        in.toGate = dg;    
+                    }
+                    
+                    dg.gindex = gateCount;
+                    gateCount++;
+                    break;
+                    
+                case uF_IN:
+                    
+                    dg.outTermVal = 2;
+                    dg.inTermVal = -1;                          //an input gate doesn't have an input from any other gate
+                    
+                    dg.gindex = gateCount;
+                    gateCount++;
+                    break;
+                    
+                case uF_OUT:
+                    
+                    dg.inTermVal = 4;
+                    dg.outTermVal = -1;                        //an output gate doesn't output to any other gate
+                    
+                    dg.gindex = gateCount;
+                    gateCount++;
+                    break;
+                    
+                    
+                    
+            }
         }
-        for (MuGate mg:gates)                           //adding opInfo to each operation gate
-        {
-            mg.addOpInfo(ucf.opMap.get(mg.symbol));
-            mg.inTermFlag = true;       //these operation gates will have their in/outTerm JSONArrays defined in their opInfo
-            mg.outTermFlag = true;
-        }
-        for(String wireName:walker.details.wires)       //translating all traditional verilog wires to MuWires
-        {
-            wires.add(new MuWire(wireName));
-            System.out.println(wireName);
-        }
+//        for(String wireName:walker.details.wires)       //translating all traditional verilog wires to MuWires
+//        {
+//            wires.add(new MuWire(wireName));
+//            System.out.println(wireName);
+//        }
         for(String wireName:walker.details.inputs)      //translating all inputs as both input MuGates and connecting MuWires   TODO: Clean this up
         {
             MuGate in = new MuGate("input", wireName);  //the MuGate for the inport
             MuWire w = new MuWire(wireName, 0, in);     //the MuWire coming out of the inport
-            in.outTermVal = 2;
-            in.inTermVal = -1;                          //an input gate doesn't have an input from any other gate
+//            in.outTermVal = 2;
+//            in.inTermVal = -1;                          //an input gate doesn't have an input from any other gate
             wires.add(w);
             gates.add(in);
-            in.gindex = gateCount;
-            gateCount++;
+//            in.gindex = gateCount;
+//            gateCount++;
             //System.out.println(wireName);
         }
         for(String wireName:walker.details.outputs)     //translating all outputs as both output MuGates and connecting MuWires TODO: Clean this up
         {
             MuGate out = new MuGate("output", wireName);//the MuGate for the outport
             wires.add(new MuWire(wireName, 1 , out));   //the MuWire off the outport
-            out.inTermVal = 4;
-            out.outTermVal = -1;                        //an output gate doesn't output to any other gate
+//            out.inTermVal = 4;
+//            out.outTermVal = -1;                        //an output gate doesn't output to any other gate
             gates.add(out);
-            out.gindex = gateCount;
-            gateCount++;
+//            out.gindex = gateCount;
+//            gateCount++;
         }
 
         parseNetList();
         combineValveChannels();
-      
-
-
+        setLayers();
     }
     public void parseNetList()      //TODO: could be cleaned up
     {
@@ -155,7 +194,7 @@ public class NetListTransition
             }
         }
     }
-    public void setLayers()
+    public void setLayers() throws JSONException
     {
         for (MuWire wire:wires)
         {
@@ -163,6 +202,7 @@ public class NetListTransition
             switch(dwt)
             {
                 case cinput:
+                case connector:         //temporary until f and c connector are implemented
                 //case cconnector:      //not yet implemented in NetSynth
                     wire.layer = "control";
                     break;
@@ -175,6 +215,21 @@ public class NetListTransition
                     System.out.println("wire name: " + wire.name);
                     break;
             }          
-        }  
+        }
+        for (MuGate gate:gates)
+        {
+            switch(gate.type)
+            {
+//                case "gate":
+//                    if (gate.opInfo.getString("layer").equals("flow")) gate.layer = "flow";
+//                    else if (gate.opInfo.getString("layer").equals("control")) gate.layer = "control";
+//                    else System.out.println("unidentified operational gate layer - check UCF?");
+//                    break;
+                case "input":
+                    if (gate.muOutput.type)
+                case "output":
+                    
+            }
+        }
     }
 }
