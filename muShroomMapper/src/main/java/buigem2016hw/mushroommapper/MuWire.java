@@ -16,12 +16,12 @@ import org.cellocad.BU.dom.DWire;
 
 public class MuWire extends DWire 
 {
-    public MuGate fromGate;
-    public MuGate toGate;
+//    public MuGate fromGate;
+//    public MuGate toGate;
     public String type;
-    public boolean isWritten = false;
-    public MuWire dupChannel;
-    public String layer;
+//    public boolean isWritten = false;
+//    public MuWire dupChannel;
+//    public String layer;
 
     public MuWire(DWire dw)
     {
@@ -45,12 +45,12 @@ public class MuWire extends DWire
         }
         name=wireName;
     }
-    public void setOrigin(MuGate originGate)
-    {
-        fromGate = originGate;
-    }
-    public void setDestination(MuGate destGate)
-    {
-        toGate = destGate;
+//    public void setOrigin(MuGate originGate)
+//    {
+//        fromGate = originGate;
+//    }
+//    public void setDestination(MuGate destGate)
+//    {
+//        toGate = destGate;
     }
 }
