@@ -8,9 +8,7 @@ package buigem2016hw.mushroommapper;
 import java.util.ArrayList;
 import java.util.List;
 import org.cellocad.BU.dom.DGate;
-import org.cellocad.BU.dom.DGateType;
 import org.cellocad.BU.dom.DWire;
-import org.cellocad.BU.dom.DWireType;
 import org.cellocad.BU.dom.LayerType;
 import org.cellocad.BU.fluigi.VerilogFluigiGrammar;
 import org.cellocad.BU.fluigi.VerilogFluigiWalker;
@@ -98,4 +96,4 @@ public class NetListTransition
         }
         gateGraph = walker.netlist;
     }    
-    }
+}
