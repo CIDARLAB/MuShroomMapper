@@ -99,20 +99,22 @@ public class Main
             NetListTransition nlt = new NetListTransition(ucf, lfrFilePath);
 
         //Create JGraphX from netlist Graph while error checking
+            /*
             System.out.println("Creating JGraphX, error checking...");
             GraphTranslation gt = new GraphTranslation(nlt, ucf);
 
         //create a visualization using JGraphX
             Visualization v = new Visualization();
             v.display(gt.jgraphx);
-
+            */
         //Create Mint file from netlist graph and parsed ucf
             System.out.println("Creating Mint file output...");
             Scanner ufNameInput = new Scanner(System.in);  //Reading from System.in
-            System.out.println("What would you like to name your .uf file? ");
-            String fileName = ufNameInput.nextLine();
+            //System.out.println("What would you like to name your .uf file? ");
+            //String fileName = ufNameInput.nextLine();
+            String fileName = "testMINT.uf";
             CreateMint cm = new CreateMint(nlt, ucf, fileName);
-            processMintDevice(fileName, "SampleInput/fluigi.ini", "sej");
+            //processMintDevice(fileName, "SampleInput/fluigi.ini", "sej");
             System.out.println("MM is all done!");
             System.exit(0);
         }
