@@ -23,29 +23,36 @@ import org.json.JSONArray;
 
 public class CreateMint 
 {
-    String line = "";
-    
+//    String line = "";
+    //initializing MINT sections to print
+    //flow sections
+    String flowInPorts = "";
+    String flowOutPorts = "";
     String flowPorts = "";
     String flowDevices = "";
     String flowChannels = "";
-    
-    int flowInPortCount = 0;
-    int flowOutPortCount = 0;
-    int flowDeviceCount = 0;
-    int flowChannelCount = 0;
-    
+    //control sections
+    String controlInPorts = "";
+    String controlOutPorts = "";
     String controlPorts = "";
     String controlDevices = "";
     String controlChannels = "";
     
+    //initializing MINT section counters
+    //flow counters
+    int flowInPortCount = 0;
+    int flowOutPortCount = 0;
+    int flowDeviceCount = 0;
+    int flowChannelCount = 0;
+    //control counters
     int controlInPortCount = 0;
     int controlOutPortCount = 0;
     int controlDeviceCount = 0;
     int controlChannelCount = 0;
     
-    
-    
-    List<String> channelList;
+    String portRadius = "100"; //to be connected with GUI
+ 
+//    List<String> channelList;
 //    List<enum> switchList;    //how to do this? :(
     
     
@@ -72,10 +79,14 @@ public class CreateMint
                 case uF_IN:
                     if (dg.layer == LayerType.flow)
                     {
+                        flowInPorts += "flowInPort" + flowInPortCount + ",";
+                        dg.mintName = "flowInPort" + flowInPortCount;
                         flowInPortCount++;
                     }
                     else if (dg.layer == LayerType.control)
                     {
+                        controlInPorts += "controlInPort"+controlInPortCount+",";
+                        dg.mintName = "controlInPort"+controlInPortCount;
                         controlInPortCount++;
                     }
                     else System.out.println("unlayered gate! UCF/Bug?");
@@ -84,10 +95,14 @@ public class CreateMint
                 case uF_OUT:
                     if (dg.layer == LayerType.flow)
                     {
+                        flowOutPorts+="outPort"+flowOutPortCount+",";
+                        dg.mintName = "outPort"+flowOutPortCount;
                         flowOutPortCount++;
                     }
                     else if (dg.layer == LayerType.control)
                     {
+                        controlOutPorts+="outPort"+controlOutPortCount+",";
+                        dg.mintName = "outPort"+controlOutPortCount;
                         controlOutPortCount++;
                     }
                     else System.out.println("unlayered gate! UCF/Bug?");
@@ -96,54 +111,52 @@ public class CreateMint
                     System.out.println("Untyped gate! Netsynth bug?");
             }
         }
+        flowPorts = flowInPorts+flowOutPorts;
+        flowPorts = flowPorts.substring(0, flowPorts.length()-1);   //removing extra comma
+        
+        controlPorts = controlInPorts+controlOutPorts;
+        controlPorts = controlPorts.substring(0, controlPorts.length()-1); //removing extra comma
+        
 //        PrintWriter mintWriter = new PrintWriter(fileName, "UTF-8");
 //        mintWriter.println("# .uf output by muShroomMapper");
 //        mintWriter.println("DEVICE testDevice");
 //        mintWriter.println("");
 //        mintWriter.println("LAYER FLOW");
 //        mintWriter.println("");
-        
-        //initializing counters
-        int flowInPortCount = 0;
-        int controlInPortCount = 0;
-        int flowOutPortCount = 0;
-        int controlOutPortCount = 0;
-        Map<String, Integer> countMap = new HashMap();
-        int channelCount = 0;        
-        
-        //concatenating flow and control inports
-        for(MuGate port:graph.gates)
-        {
-            if(port.type.equals("input"))
-            {
                 
-                if(port.layer.equals("flow"))
-                {   //creating flow inports
-                    flowPorts += "flowInPort" + flowInPortCount + ",";
-                    port.mintName = "flowInPort" + flowInPortCount;
-                    flowInPortCount++;
-                }               
-                else if (port.layer.equals("control"))
-                {
-                    controlPorts += "controlInPort"+controlInPortCount+",";
-                    port.mintName = "controlInPort"+controlInPortCount;
-                    controlInPortCount++;
-                }
-                else System.out.println("Unidentified port layer!");
-            }
-        }
+        //concatenating flow and control inports
+//        for(MuGate port:graph.gates)
+//        {
+//            if(port.type.equals("input"))
+//            {
+//                
+//                if(port.layer.equals("flow"))
+//                {   //creating flow inports
+//                    flowPorts += "flowInPort" + flowInPortCount + ",";
+//                    port.mintName = "flowInPort" + flowInPortCount;
+//                    flowInPortCount++;
+//                }               
+//                else if (port.layer.equals("control"))
+//                {
+//                    controlInPorts += "controlInPort"+controlInPortCount+",";
+//                    port.mintName = "controlInPort"+controlInPortCount;
+//                    controlInPortCount++;
+//                }
+//                else System.out.println("Unidentified port layer!");
+//            }
+//        }
         //concatenating flow outports
-        for (MuGate port:graph.gates)
-        {
-            if(port.type.equals("output"))
-            {
-                flowPorts+="outPort"+outPortCount;
-                port.mintName = "outPort"+outPortCount;
-                if (outPortCount == (graph.outPorts.size()-1)) flowPorts+=" r=100;";
-                else flowPorts+=",";
-                outPortCount++;
-            }
-        }
+//        for (MuGate port:graph.gates)
+//        {
+//            if(port.type.equals("output"))
+//            {
+//                flowOutPorts+="outPort"+flowOutPortCount;
+//                port.mintName = "outPort"+flowOutPortCount;
+//                if (outPortCount == (graph.outPorts.size()-1)) flowPorts+=" r=100;";
+//                else flowPorts+=",";
+//                outPortCount++;
+//            }
+//        }
         mintWriter.println("PORT " + flowPorts);        //printing out concatenated flow ports to mint file
         
         //adding devices
@@ -206,27 +219,32 @@ public class CreateMint
             }
         }                       //TODO: NEED TO MAKE CHANNEL SIZE PARAMETRIC ^^^ <---GUI controlled sizing?
         
-        mintWriter.println("");
-        mintWriter.println("END LAYER");
-        mintWriter.println("");
-        mintWriter.println("LAYER CONTROL");
-        mintWriter.println("");
-        mintWriter.println("PORT " + controlPorts);             //printing control ports to mint file... could for through and mark control ports printed here?
-        //print control gates
-        mintWriter.println(controlChannels);
-        mintWriter.println("");
-        mintWriter.println("END LAYER");
-        
-        mintWriter.close();
+
     }
-    public void printMint(String fileName) throws FileNotFoundException
+    public void printMint(String fileName) throws FileNotFoundException, UnsupportedEncodingException
     {
         PrintWriter mintWriter = new PrintWriter(fileName, "UTF-8");
         mintWriter.println("# .uf output by muShroomMapper");
         mintWriter.println("DEVICE testDevice");
         mintWriter.println("");
+        
         mintWriter.println("LAYER FLOW");
         mintWriter.println("");
+        mintWriter.println("PORT " + flowPorts + " r=" + portRadius);
+        //print flow ports, devices, channels
+        mintWriter.println("");
+        mintWriter.println("END LAYER");
+        mintWriter.println("");
+        
+        mintWriter.println("LAYER CONTROL");
+        mintWriter.println("");
+        mintWriter.println("PORT " + controlPorts + " r=" + portRadius);
+        //print control devices
+        mintWriter.println(controlChannels);
+        mintWriter.println("");
+        mintWriter.println("END LAYER");
+        
+        mintWriter.close();
     }
     
 }
