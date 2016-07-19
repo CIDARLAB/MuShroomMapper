@@ -4,7 +4,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.lang.String;
+import org.cellocad.BU.dom.DGate;
+import org.cellocad.BU.dom.DGateType;
+import org.cellocad.BU.dom.LayerType;
 import org.json.JSONException;
 import org.json.JSONArray;
 
@@ -15,26 +21,94 @@ import org.json.JSONArray;
 
 //To do: set up Mint control layer writing
 
-public class CreateMint {
+public class CreateMint 
+{
     String line = "";
+    
     String flowPorts = "";
+    String flowDevices = "";
+    String flowChannels = "";
+    
+    int flowInPortCount = 0;
+    int flowOutPortCount = 0;
+    int flowDeviceCount = 0;
+    int flowChannelCount = 0;
+    
     String controlPorts = "";
+    String controlDevices = "";
+    String controlChannels = "";
+    
+    int controlInPortCount = 0;
+    int controlOutPortCount = 0;
+    int controlDeviceCount = 0;
+    int controlChannelCount = 0;
+    
+    
+    
     List<String> channelList;
+//    List<enum> switchList;    //how to do this? :(
     
     
-    public CreateMint(NetListTransition graph, ParsedUCF ucf, String fileName) throws UnsupportedEncodingException, FileNotFoundException, JSONException, IOException{
-        PrintWriter mintWriter = new PrintWriter(fileName, "UTF-8");
-        mintWriter.println("# .uf output by muShroomMapper");
-        mintWriter.println("DEVICE testDevice");
-        mintWriter.println("");
-        mintWriter.println("LAYER FLOW");
-        mintWriter.println("");
+    
+    
+    public CreateMint(NetListTransition graph, ParsedUCF ucf, String fileName) throws UnsupportedEncodingException, FileNotFoundException, JSONException, IOException
+    {
+        for(DGate dg:graph.gateGraph)
+        {
+            switch(dg.gtype)
+            {
+                case uF:
+                    if (dg.layer == LayerType.flow)
+                    {
+                        flowDeviceCount++;
+                    }
+                    else if (dg.layer == LayerType.control)
+                    {
+                        controlDeviceCount++;
+                    }
+                    else System.out.println("unlayered gate! UCF/Bug?");
+                    break;
+                    
+                case uF_IN:
+                    if (dg.layer == LayerType.flow)
+                    {
+                        flowInPortCount++;
+                    }
+                    else if (dg.layer == LayerType.control)
+                    {
+                        controlInPortCount++;
+                    }
+                    else System.out.println("unlayered gate! UCF/Bug?");
+                    break;
+                    
+                case uF_OUT:
+                    if (dg.layer == LayerType.flow)
+                    {
+                        flowOutPortCount++;
+                    }
+                    else if (dg.layer == LayerType.control)
+                    {
+                        controlOutPortCount++;
+                    }
+                    else System.out.println("unlayered gate! UCF/Bug?");
+                    break;
+                default:
+                    System.out.println("Untyped gate! Netsynth bug?");
+            }
+        }
+//        PrintWriter mintWriter = new PrintWriter(fileName, "UTF-8");
+//        mintWriter.println("# .uf output by muShroomMapper");
+//        mintWriter.println("DEVICE testDevice");
+//        mintWriter.println("");
+//        mintWriter.println("LAYER FLOW");
+//        mintWriter.println("");
         
         //initializing counters
         int flowInPortCount = 0;
         int controlInPortCount = 0;
-        int outPortCount = 0;
-        int deviceCount = 0;  
+        int flowOutPortCount = 0;
+        int controlOutPortCount = 0;
+        Map<String, Integer> countMap = new HashMap();
         int channelCount = 0;        
         
         //concatenating flow and control inports
@@ -42,18 +116,20 @@ public class CreateMint {
         {
             if(port.type.equals("input"))
             {
-                if(port.opInfo.get("layer").equals("flow"))
+                
+                if(port.layer.equals("flow"))
                 {   //creating flow inports
                     flowPorts += "flowInPort" + flowInPortCount + ",";
                     port.mintName = "flowInPort" + flowInPortCount;
                     flowInPortCount++;
                 }               
-                else
+                else if (port.layer.equals("control"))
                 {
                     controlPorts += "controlInPort"+controlInPortCount+",";
                     port.mintName = "controlInPort"+controlInPortCount;
                     controlInPortCount++;
                 }
+                else System.out.println("Unidentified port layer!");
             }
         }
         //concatenating flow outports
@@ -143,4 +219,14 @@ public class CreateMint {
         
         mintWriter.close();
     }
+    public void printMint(String fileName) throws FileNotFoundException
+    {
+        PrintWriter mintWriter = new PrintWriter(fileName, "UTF-8");
+        mintWriter.println("# .uf output by muShroomMapper");
+        mintWriter.println("DEVICE testDevice");
+        mintWriter.println("");
+        mintWriter.println("LAYER FLOW");
+        mintWriter.println("");
+    }
+    
 }
