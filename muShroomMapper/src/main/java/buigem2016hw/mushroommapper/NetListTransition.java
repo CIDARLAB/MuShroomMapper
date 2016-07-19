@@ -79,7 +79,7 @@ public class NetListTransition
                         dg.outTermVal = 1;
                         dg.inTermVal = -1;       
                     }
-                    
+                                   
                     dg.gindex = gateCount;
                     gateCount++;
                     break;
@@ -98,4 +98,4 @@ public class NetListTransition
         }
         gateGraph = walker.netlist;
     }    
-}
+    }
