@@ -107,7 +107,7 @@ public class Main
             Visualization v = new Visualization();
             v.display(gt.jgraphx);
             */
-        
+            
         //Create Mint file from netlist graph and parsed ucf
             System.out.println("Creating Mint file output...");
             Scanner ufNameInput = new Scanner(System.in);  //Reading from System.in
