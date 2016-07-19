@@ -21,7 +21,6 @@ import org.json.JSONArray;
  *
  * @author Shane
  */
-//To do: set up Mint control layer writing
 public class CreateMint {
 //    String line = "";
     //initializing MINT sections to print
@@ -223,8 +222,8 @@ public class CreateMint {
                         System.out.println("untyped wire! check netsynth!");
                         break;
                 }
-            }
-        }
+                    }
+                    }
         flowPorts = flowInPorts + flowOutPorts;
         flowPorts = flowPorts.substring(0, flowPorts.length() - 1);   //removing extra comma
 
@@ -239,7 +238,7 @@ public class CreateMint {
         mintWriter.println("# .uf output by muShroomMapper");
         mintWriter.println("3D DEVICE testDevice");
         mintWriter.println("");
-
+        
         mintWriter.println("LAYER FLOW\n\n");
 
         mintWriter.println("PORT " + flowPorts + " r=" + portRadius + ";\n");
@@ -262,5 +261,4 @@ public class CreateMint {
 
         mintWriter.close();
     }
-
 }
