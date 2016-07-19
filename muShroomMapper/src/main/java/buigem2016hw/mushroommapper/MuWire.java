@@ -18,33 +18,33 @@ public class MuWire extends DWire
 {
 //    public MuGate fromGate;
 //    public MuGate toGate;
-    public String type;
+//    public String type;
 //    public boolean isWritten = false;
 //    public MuWire dupChannel;
 //    public String layer;
 
-    public MuWire(DWire dw)
-    {
-        this.wtype = dw.wtype;
-        this.name = dw.name;
-    }
-    public MuWire(String wireName)
-    {
-        name=wireName;
-        type = "connector";
-    }
-    public MuWire(String wireName, int io, MuGate ioGate)
-    {
-        if (io == 0) {
-            fromGate = ioGate;
-            type = "input";
-        }
-        else{
-            toGate = ioGate;
-            type = "output";
-        }
-        name=wireName;
-    }
+//    public MuWire(DWire dw)
+//    {
+//        this.wtype = dw.wtype;
+//        this.name = dw.name;
+//    }
+//    public MuWire(String wireName)
+//    {
+//        name=wireName;
+//        type = "connector";
+//    }
+//    public MuWire(String wireName, int io, MuGate ioGate)
+//    {
+//        if (io == 0) {
+//            fromGate = ioGate;
+//            type = "input";
+//        }
+//        else{
+//            toGate = ioGate;
+//            type = "output";
+//        }
+//        name=wireName;
+//    }
 //    public void setOrigin(MuGate originGate)
 //    {
 //        fromGate = originGate;
@@ -52,5 +52,4 @@ public class MuWire extends DWire
 //    public void setDestination(MuGate destGate)
 //    {
 //        toGate = destGate;
-    }
 }
