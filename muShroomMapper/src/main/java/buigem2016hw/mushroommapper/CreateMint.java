@@ -107,9 +107,9 @@ public class CreateMint {
                         default:
                             System.out.println("unlayered gate! UCF/Bug?");
                             break;
-                    }
-                    break;
-
+                                }
+                            break;
+                        
                 case uF_OUT:
                     switch (dg.layer) {
                         case flow:
@@ -216,9 +216,9 @@ public class CreateMint {
                         dw.isWritten = true;
                         flowChannelCount++;
 
-                        break;
+                            break;
 
-                    default:
+                default:
                         System.out.println("untyped wire! check netsynth!");
                         break;
                 }
@@ -258,7 +258,7 @@ public class CreateMint {
 
         mintWriter.println("");
         mintWriter.println("END LAYER");
-
+        
         mintWriter.close();
     }
 }
