@@ -52,11 +52,7 @@ public class CreateMint
     
     String portRadius = "100"; //to be connected with GUI
  
-//    List<String> channelList;
-//    List<enum> switchList;    //how to do this? :(
-    
-    
-    
+//    List<String> channelList;   
     
     public CreateMint(NetListTransition graph, ParsedUCF ucf, String fileName) throws UnsupportedEncodingException, FileNotFoundException, JSONException, IOException
     {
@@ -72,13 +68,16 @@ public class CreateMint
                             devLine = devLine.replaceAll("NAME", "Device" + flowDeviceCount + dg.opInfo.getString("name"));
                             dg.mintName = "Device" + flowDeviceCount + dg.opInfo.getString("name");
                         
-                            flowInPorts+=devLine;
-                            flowInPorts+="\n";
+                            flowDevices+=devLine;
+                            flowDevices+="\n";
+                            dg.isWritten = true;
                             flowDeviceCount++;
                             break;
+                        
                         case control:
                             controlDeviceCount++;
                             break;
+                        
                         default: System.out.println("unlayered gate! UCF/Bug?"); break;
                     }
                     break;
@@ -89,13 +88,19 @@ public class CreateMint
                         case flow:
                             flowInPorts += "flowInPort" + flowInPortCount + ",";
                             dg.mintName = "flowInPort" + flowInPortCount;
+                            
+                            dg.isWritten = true;
                             flowInPortCount++;
                             break;
+                        
                         case control:
                             controlInPorts += "controlInPort"+controlInPortCount+",";
                             dg.mintName = "controlInPort"+controlInPortCount;
+                            
+                            dg.isWritten = true;
                             controlInPortCount++;
                             break;
+                        
                         default: System.out.println("unlayered gate! UCF/Bug?"); break; 
                     }
                     break;
@@ -106,16 +111,22 @@ public class CreateMint
                         case flow:
                             flowOutPorts+="outPort"+flowOutPortCount+",";
                             dg.mintName = "outPort"+flowOutPortCount;
+                            
+                            dg.isWritten = true;
                             flowOutPortCount++;
                             break;
                         case control:
                            controlOutPorts+="outPort"+controlOutPortCount+",";
                             dg.mintName = "outPort"+controlOutPortCount;
+                                                        
+                            dg.isWritten = true;
                             controlOutPortCount++; 
+                            break;
 
                         default: System.out.println("unlayered gate! UCF/Bug?"); break;
                     }
                     break;
+                    
                 default:
                     System.out.println("Untyped gate! Netsynth bug?"); break;
             }
@@ -126,13 +137,8 @@ public class CreateMint
         controlPorts = controlInPorts+controlOutPorts;
         controlPorts = controlPorts.substring(0, controlPorts.length()-1); //removing extra comma
         
-//        PrintWriter mintWriter = new PrintWriter(fileName, "UTF-8");
-//        mintWriter.println("# .uf output by muShroomMapper");
-//        mintWriter.println("DEVICE testDevice");
-//        mintWriter.println("");
-//        mintWriter.println("LAYER FLOW");
-//        mintWriter.println("");
-                
+        printMint(fileName);
+                 
         //concatenating flow and control inports
 //        for(MuGate port:graph.gates)
 //        {
@@ -173,12 +179,12 @@ public class CreateMint
         {
             if (mg.type.equals("gate"))
             {
-                String mint = mg.opInfo.get("mint") + ";";
-                mint = mint.replaceAll("NAME", "Device"+deviceCount+mg.opInfo.getString("name"));
-                mg.mintName = "Device"+deviceCount+mg.opInfo.getString("name");
-                mintWriter.println(mint);               //printing out mF gate
-                mg.isWritten = true;                    //tagging gate as printed
-                deviceCount++;
+//                String mint = mg.opInfo.get("mint") + ";";
+//                mint = mint.replaceAll("NAME", "Device"+deviceCount+mg.opInfo.getString("name"));
+//                mg.mintName = "Device"+deviceCount+mg.opInfo.getString("name");
+//                mintWriter.println(mint);               //printing out mF gate
+//                mg.isWritten = true;                    //tagging gate as printed
+//                deviceCount++;
             }
         }
 
