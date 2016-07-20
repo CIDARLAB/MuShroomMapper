@@ -65,50 +65,59 @@ public class CreateMint
             switch(dg.gtype)
             {
                 case uF:
-                    if (dg.layer == LayerType.flow)
+                    switch (dg.layer) 
                     {
-                        flowDeviceCount++;
+                        case flow:
+                            String devLine = dg.opInfo.getString("mint") + ";";
+                            devLine = devLine.replaceAll("NAME", "Device" + flowDeviceCount + dg.opInfo.getString("name"));
+                            dg.mintName = "Device" + flowDeviceCount + dg.opInfo.getString("name");
+                        
+                            flowInPorts+=devLine;
+                            flowInPorts+="\n";
+                            flowDeviceCount++;
+                            break;
+                        case control:
+                            controlDeviceCount++;
+                            break;
+                        default: System.out.println("unlayered gate! UCF/Bug?"); break;
                     }
-                    else if (dg.layer == LayerType.control)
-                    {
-                        controlDeviceCount++;
-                    }
-                    else System.out.println("unlayered gate! UCF/Bug?");
                     break;
                     
                 case uF_IN:
-                    if (dg.layer == LayerType.flow)
+                    switch (dg.layer) 
                     {
-                        flowInPorts += "flowInPort" + flowInPortCount + ",";
-                        dg.mintName = "flowInPort" + flowInPortCount;
-                        flowInPortCount++;
+                        case flow:
+                            flowInPorts += "flowInPort" + flowInPortCount + ",";
+                            dg.mintName = "flowInPort" + flowInPortCount;
+                            flowInPortCount++;
+                            break;
+                        case control:
+                            controlInPorts += "controlInPort"+controlInPortCount+",";
+                            dg.mintName = "controlInPort"+controlInPortCount;
+                            controlInPortCount++;
+                            break;
+                        default: System.out.println("unlayered gate! UCF/Bug?"); break; 
                     }
-                    else if (dg.layer == LayerType.control)
-                    {
-                        controlInPorts += "controlInPort"+controlInPortCount+",";
-                        dg.mintName = "controlInPort"+controlInPortCount;
-                        controlInPortCount++;
-                    }
-                    else System.out.println("unlayered gate! UCF/Bug?");
                     break;
                     
                 case uF_OUT:
-                    if (dg.layer == LayerType.flow)
+                    switch (dg.layer) 
                     {
-                        flowOutPorts+="outPort"+flowOutPortCount+",";
-                        dg.mintName = "outPort"+flowOutPortCount;
-                        flowOutPortCount++;
+                        case flow:
+                            flowOutPorts+="outPort"+flowOutPortCount+",";
+                            dg.mintName = "outPort"+flowOutPortCount;
+                            flowOutPortCount++;
+                            break;
+                        case control:
+                           controlOutPorts+="outPort"+controlOutPortCount+",";
+                            dg.mintName = "outPort"+controlOutPortCount;
+                            controlOutPortCount++; 
+
+                        default: System.out.println("unlayered gate! UCF/Bug?"); break;
                     }
-                    else if (dg.layer == LayerType.control)
-                    {
-                        controlOutPorts+="outPort"+controlOutPortCount+",";
-                        dg.mintName = "outPort"+controlOutPortCount;
-                        controlOutPortCount++;
-                    }
-                    else System.out.println("unlayered gate! UCF/Bug?");
                     break;
                 default:
-                    System.out.println("Untyped gate! Netsynth bug?");
+                    System.out.println("Untyped gate! Netsynth bug?"); break;
             }
         }
         flowPorts = flowInPorts+flowOutPorts;
@@ -157,7 +166,7 @@ public class CreateMint
 //                outPortCount++;
 //            }
 //        }
-        mintWriter.println("PORT " + flowPorts);        //printing out concatenated flow ports to mint file
+//        mintWriter.println("PORT " + flowPorts);        //printing out concatenated flow ports to mint file
         
         //adding devices
         for (MuGate mg:graph.gates)
