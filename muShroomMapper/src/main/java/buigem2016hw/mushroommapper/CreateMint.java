@@ -10,6 +10,7 @@ import java.util.Map;
 import java.lang.String;
 import org.cellocad.BU.dom.DGate;
 import org.cellocad.BU.dom.DGateType;
+import org.cellocad.BU.dom.DWire;
 import org.cellocad.BU.dom.LayerType;
 import org.json.JSONException;
 import org.json.JSONArray;
@@ -64,17 +65,54 @@ public class CreateMint
                     switch (dg.layer) 
                     {
                         case flow:
-                            String devLine = dg.opInfo.getString("mint") + ";";
-                            devLine = devLine.replaceAll("NAME", "Device" + flowDeviceCount + dg.opInfo.getString("name"));
+                            String fDevLine = dg.opInfo.getString("mint") + ";";
+                            fDevLine = fDevLine.replaceAll("NAME", "Device" + flowDeviceCount + dg.opInfo.getString("name"));
                             dg.mintName = "Device" + flowDeviceCount + dg.opInfo.getString("name");
+                            
+                            for (DWire in:dg.input)
+                            {
+                                if (in.isWritten == false)
+                                {
+                                    
+                                    in.isWritten = true;
+                                }
+                            }
+                            
+                            if (dg.output.isWritten == false)                            
+                            {
+                                
+                                dg.output.isWritten = true;
+                            }
                         
-                            flowDevices+=devLine;
+                            flowDevices+=fDevLine;
                             flowDevices+="\n";
                             dg.isWritten = true;
                             flowDeviceCount++;
                             break;
                         
-                        case control:
+                        case control:       //TODO: test how control devices print
+                            String cDevLine = dg.opInfo.getString("mint") + ";";
+                            cDevLine = cDevLine.replaceAll("NAME", "Device" + controlDeviceCount + dg.opInfo.getString("name"));
+                            dg.mintName = "Device" + flowDeviceCount + dg.opInfo.getString("name");
+                            
+                            for (DWire in:dg.input)
+                            {
+                                if (in.isWritten == false)
+                                {
+                                    
+                                    in.isWritten = true;
+                                }
+                            }
+                            
+                            if (dg.output.isWritten == false)                            
+                            {
+                                
+                                dg.output.isWritten = true;
+                            }
+                            
+                            controlDevices+=cDevLine;
+                            controlDevices+="\n";
+                            dg.isWritten = true;
                             controlDeviceCount++;
                             break;
                         
@@ -89,6 +127,12 @@ public class CreateMint
                             flowInPorts += "flowInPort" + flowInPortCount + ",";
                             dg.mintName = "flowInPort" + flowInPortCount;
                             
+                            if (dg.output.isWritten == false)
+                            {
+                                
+                                dg.output.isWritten = true;
+                            }
+                            
                             dg.isWritten = true;
                             flowInPortCount++;
                             break;
@@ -96,6 +140,12 @@ public class CreateMint
                         case control:
                             controlInPorts += "controlInPort"+controlInPortCount+",";
                             dg.mintName = "controlInPort"+controlInPortCount;
+                            
+                            if (dg.output.isWritten == false)
+                            {
+                                
+                                dg.output.isWritten = true;
+                            }
                             
                             dg.isWritten = true;
                             controlInPortCount++;
@@ -112,12 +162,24 @@ public class CreateMint
                             flowOutPorts+="outPort"+flowOutPortCount+",";
                             dg.mintName = "outPort"+flowOutPortCount;
                             
+                            if (dg.input.get(0).isWritten == false)
+                            {
+                                
+                                dg.input.get(0).isWritten = true;
+                            }
+                            
                             dg.isWritten = true;
                             flowOutPortCount++;
                             break;
                         case control:
                            controlOutPorts+="outPort"+controlOutPortCount+",";
                             dg.mintName = "outPort"+controlOutPortCount;
+                            
+                            if (dg.input.get(0).isWritten == false)
+                            {
+                                
+                                dg.input.get(0).isWritten = true;
+                            }
                                                         
                             dg.isWritten = true;
                             controlOutPortCount++; 
@@ -139,57 +201,8 @@ public class CreateMint
         
         printMint(fileName);
                  
-        //concatenating flow and control inports
-//        for(MuGate port:graph.gates)
-//        {
-//            if(port.type.equals("input"))
-//            {
-//                
-//                if(port.layer.equals("flow"))
-//                {   //creating flow inports
-//                    flowPorts += "flowInPort" + flowInPortCount + ",";
-//                    port.mintName = "flowInPort" + flowInPortCount;
-//                    flowInPortCount++;
-//                }               
-//                else if (port.layer.equals("control"))
-//                {
-//                    controlInPorts += "controlInPort"+controlInPortCount+",";
-//                    port.mintName = "controlInPort"+controlInPortCount;
-//                    controlInPortCount++;
-//                }
-//                else System.out.println("Unidentified port layer!");
-//            }
-//        }
-        //concatenating flow outports
-//        for (MuGate port:graph.gates)
-//        {
-//            if(port.type.equals("output"))
-//            {
-//                flowOutPorts+="outPort"+flowOutPortCount;
-//                port.mintName = "outPort"+flowOutPortCount;
-//                if (outPortCount == (graph.outPorts.size()-1)) flowPorts+=" r=100;";
-//                else flowPorts+=",";
-//                outPortCount++;
-//            }
-//        }
-//        mintWriter.println("PORT " + flowPorts);        //printing out concatenated flow ports to mint file
-        
-        //adding devices
-        for (MuGate mg:graph.gates)
-        {
-            if (mg.type.equals("gate"))
-            {
-//                String mint = mg.opInfo.get("mint") + ";";
-//                mint = mint.replaceAll("NAME", "Device"+deviceCount+mg.opInfo.getString("name"));
-//                mg.mintName = "Device"+deviceCount+mg.opInfo.getString("name");
-//                mintWriter.println(mint);               //printing out mF gate
-//                mg.isWritten = true;                    //tagging gate as printed
-//                deviceCount++;
-            }
-        }
-
         //adding channels
-        String controlChannels = "";
+//        String controlChannels = "";
         for(MuWire w : graph.wires)                 //printing flow channels eg: "CHANNEL flowchannel0 from Device0 2 to Device1 4 w=100;"
         {
             if (w.isWritten == true) continue;      //skip any duplicate channels
@@ -245,17 +258,22 @@ public class CreateMint
         
         mintWriter.println("LAYER FLOW");
         mintWriter.println("");
+        
         mintWriter.println("PORT " + flowPorts + " r=" + portRadius);
-        //print flow ports, devices, channels
+        mintWriter.println(flowDevices);
+        mintWriter.println(flowChannels);
+        
         mintWriter.println("");
         mintWriter.println("END LAYER");
         mintWriter.println("");
         
         mintWriter.println("LAYER CONTROL");
         mintWriter.println("");
+        
         mintWriter.println("PORT " + controlPorts + " r=" + portRadius);
-        //print control devices
+        mintWriter.println(controlDevices);
         mintWriter.println(controlChannels);
+        
         mintWriter.println("");
         mintWriter.println("END LAYER");
         
