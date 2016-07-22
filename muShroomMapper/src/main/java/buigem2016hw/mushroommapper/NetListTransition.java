@@ -26,6 +26,7 @@ public class NetListTransition
     public String line;
     VerilogFluigiWalker walker;
     public List<DGate> gateGraph;
+    public List<DWire> wireGraph;
        
     public NetListTransition(ParsedUCF ucf, String vFilePath) throws JSONException
     {
@@ -52,9 +53,11 @@ public class NetListTransition
                     dg.outTermFlag = true;
                     
                     dg.output.fromGate = dg;
+                    wireGraph.add(dg.output);
                     for (DWire in:dg.input)
                     {
-                        in.toGate = dg;    
+                        in.toGate = dg; 
+                        wireGraph.add(in);
                     }
                     
                     dg.gindex = gateCount;
@@ -63,6 +66,7 @@ public class NetListTransition
                     
                 case uF_IN:
                     dg.output.fromGate = dg;
+                    wireGraph.add(dg.output);
                     
                     dg.outTermVal = 2;
                     dg.inTermVal = -1;                          //an input gate doesn't have an input from any other gate
@@ -73,6 +77,7 @@ public class NetListTransition
                     
                 case uF_OUT:
                     dg.input.get(0).toGate = dg;
+                    wireGraph.add(dg.input.get(0));
                     
                     dg.inTermVal = 4;
                     dg.outTermVal = -1;                        //an output gate doesn't output to any other gate
@@ -83,30 +88,5 @@ public class NetListTransition
             }
         }
         gateGraph = walker.netlist;
-//        combineValveChannels();
     }    
-//    public void combineValveChannels()      //identifying duplicate channels made by a valve splitting up a flow channel into input and output
-//    {
-//        for(MuGate gate:gates)
-//        {
-//            int fInCount = 0;
-//            int cInCount = 0;
-//            for(DWire input:gate.input)
-//            {
-//                if(input.wtype.equals("fchan") || input.wtype.equals("finput")) fInCount++;
-//                else if (input.wtype.equals("cchan") || input.wtype.equals("cinput")) cInCount++;
-//            }
-//            if (fInCount==1 && cInCount==1)
-//            {
-//                for (MuWire input:gate.muInput)
-//                {
-//                    if(input.wtype.equals("fchan") || input.wtype.equals("finput")) //TODO: needs work
-//                    {
-//                        input.dupChannel = gate.muOutput;   //for identifying duplicate channel from valve
-//                        gate.muOutput.isWritten = true;
-//                    }
-//                }
-//            }
-//        }
-//    }
 }
