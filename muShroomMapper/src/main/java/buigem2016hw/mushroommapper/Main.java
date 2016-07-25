@@ -11,7 +11,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.json.JSONException;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import static org.cidarlab.fluigi.fluigi.Fluigi.processMintDevice;
+//import static org.cidarlab.fluigi.fluigi.Fluigi.processMintDevice;
 
 /**
  *
@@ -107,13 +107,14 @@ public class Main
             Visualization v = new Visualization();
             v.display(gt.jgraphx);
             */
+        
         //Create Mint file from netlist graph and parsed ucf
             System.out.println("Creating Mint file output...");
             Scanner ufNameInput = new Scanner(System.in);  //Reading from System.in
             //System.out.println("What would you like to name your .uf file? ");
             //String fileName = ufNameInput.nextLine();
             String fileName = "testMINT.uf";
-            CreateMint cm = new CreateMint(nlt, ucf, fileName);
+            CreateMint cm = new CreateMint(nlt, ucf, fileName, 100);
             //processMintDevice(fileName, "SampleInput/fluigi.ini", "sej");
             System.out.println("MM is all done!");
             System.exit(0);
