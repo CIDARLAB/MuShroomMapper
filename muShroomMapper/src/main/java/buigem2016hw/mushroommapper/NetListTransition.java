@@ -25,8 +25,8 @@ public class NetListTransition
     public String filepath;
     public String line;
     VerilogFluigiWalker walker;
-    public List<DGate> gateGraph;
-    public List<DWire> wireGraph;
+    public List<DGate> gateGraph = new ArrayList<>();
+    public List<DWire> wireGraph = new ArrayList<>();
        
     public NetListTransition(ParsedUCF ucf, String vFilePath) throws JSONException
     {
@@ -45,7 +45,7 @@ public class NetListTransition
                     if (dg.opInfo.getString("layer").equals("flow")) dg.layer = LayerType.flow;                 //filling out layer of uF operation gates
                     else if (dg.opInfo.getString("layer").equals("control")) dg.layer = LayerType.control;
                     else System.out.println("Operator " + dg.symbol + " without layer attribute! Check UCF!");
-                    
+//                    System.out.println("layer: " + dg.layer);
                     dg.inTermInd = 0;
                     dg.outTermInd = 0;
         
@@ -53,9 +53,9 @@ public class NetListTransition
                     dg.outTermFlag = true;
                     
                     dg.output.fromGate = dg;
-                    wireGraph.add(dg.output);
+                    wireGraph.add(dg.output);  
                     for (DWire in:dg.input)
-                    {
+                    {                        
                         in.toGate = dg; 
                         wireGraph.add(in);
                     }
@@ -64,18 +64,25 @@ public class NetListTransition
                     gateCount++;
                     break;
                     
-                case uF_IN:
+                case uF_IN:                                     
                     dg.output.fromGate = dg;
                     wireGraph.add(dg.output);
-                    
-                    dg.outTermVal = 2;
-                    dg.inTermVal = -1;                          //an input gate doesn't have an input from any other gate
+                    if (dg.layer == LayerType.flow)
+                    {
+                        dg.outTermVal = 2;
+                        dg.inTermVal = -1;                          //an input gate doesn't have an input from any other gate
+                    }
+                    else if (dg.layer == LayerType.control)
+                    {
+                        dg.outTermVal = 1;
+                        dg.inTermVal = -1;       
+                    }
                     
                     dg.gindex = gateCount;
                     gateCount++;
                     break;
                     
-                case uF_OUT:
+                case uF_OUT:                 
                     dg.input.get(0).toGate = dg;
                     wireGraph.add(dg.input.get(0));
                     
