@@ -258,7 +258,7 @@ public class CreateMint {
 
         mintWriter.println("");
         mintWriter.println("END LAYER");
-        
+
         mintWriter.close();
     }
 }
