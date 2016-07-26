@@ -21,18 +21,13 @@ public class DebugMain {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws FileNotFoundException, JSONException, IOException {
-               //Read in ucf
-            Scanner reader = new Scanner(System.in);  // Reading from System.in
-            System.out.println("Enter path/to/UCFFile: ");
-            //String ucfPath = reader.nextLine(); // reads in filepath
-            String ucfPath = "ucf.json";     //temp path for debugging
+        //Read in ucf
+            String ucfPath = "ucf.json";     //path for debugging
             System.out.println("Reading UCF...");
             ParsedUCF ucf = new ParsedUCF(ucfPath);
 
         //Read Verilog + Make Graph
-            //System.out.println("Enter path/to/VerilogFile: ");
-            //String vPath = reader.nextLine(); // reads in filepath
-            String vPath = "lfr.v";          //temp path for debugging
+            String vPath = "lfr.v";          //path for debugging
             System.out.println("Reading Verilog...");
             NetListTransition nlt = new NetListTransition(ucf, vPath);
 
@@ -48,9 +43,6 @@ public class DebugMain {
         
         //Create Mint file from netlist graph and parsed ucf
             System.out.println("Creating Mint file output...");
-            //Scanner ufNameInput = new Scanner(System.in);  //Reading from System.in
-            //System.out.println("What would you like to name your .uf file? ");
-            //String fileName = ufNameInput.nextLine();
             String fileName = "testMINT.uf";
             CreateMint cm = new CreateMint(nlt, ucf, fileName, 100);
             processMintDevice(fileName, "SampleInput/fluigi.ini", "sej", true);
