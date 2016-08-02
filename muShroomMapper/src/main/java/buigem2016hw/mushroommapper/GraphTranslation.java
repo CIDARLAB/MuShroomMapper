@@ -18,6 +18,9 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import org.cellocad.BU.dom.DGate;
+import org.cellocad.BU.dom.DGateType;
+import org.cellocad.BU.dom.DWire;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -34,66 +37,61 @@ import org.json.JSONObject;
     Move error checking elsewhere? It doesn't seem logical here...
 */
 public class GraphTranslation{
-//    public mxGraph jgraphx = new mxGraph();
-//    mxStylesheet styleSheet = jgraphx.getStylesheet();
-//    Object parent = jgraphx.getDefaultParent();
-//    List<Object> vertices = new ArrayList<>();   
+    public mxGraph jgraphx = new mxGraph();
+    mxStylesheet styleSheet = jgraphx.getStylesheet();
+    Object parent = jgraphx.getDefaultParent();
+    List<Object> vertices = new ArrayList<>();   
 //    
-//    GraphTranslation(NetListTransition net, ParsedUCF ucf) throws Exceptions, JSONException{
-//        //Error checking!!
-//        checkForErrors(net, ucf);
-//        
-//        //Create styles for each operator type 
-//        jgraphx.getModel().beginUpdate();
-//        generateJGraphX(net, ucf);
-//        jgraphx.getModel().endUpdate();
-//    }
+    GraphTranslation(NetListTransition net, ParsedUCF ucf) throws Exceptions, JSONException{
+        //Error checking!!
+        checkForErrors(net, ucf);
+        
+        //Create styles for each operator type 
+        jgraphx.getModel().beginUpdate();
+        generateJGraphX(net, ucf);
+        jgraphx.getModel().endUpdate();
+    }
 //    
-//    private void generateJGraphX(NetListTransition net, ParsedUCF ucf) throws JSONException{
-//        //create sytles
-//        generateStyles(ucf);
-//        for( MuGate d : net.gates ){
-//            vertices.add(d.gindex, jgraphx.insertVertex(parent, Integer.toString(d.gindex), d.gindex, 0, 0, 80, 30, "style_"+d.symbol));
-//        }
-//        
-//        for ( MuWire w : net.wires){
-//            Object inVert = vertices.get(w.fromGate.gindex);
-//            Object outVert = vertices.get(w.toGate.gindex);
-//            jgraphx.insertEdge(parent, null, "", inVert, outVert);
-//        }
-//    }
+    private void generateJGraphX(NetListTransition net, ParsedUCF ucf) throws JSONException{
+        //create sytles
+        generateStyles(ucf);
+        for( DGate d : net.gateGraph ){
+            vertices.add(d.gindex, jgraphx.insertVertex(parent, Integer.toString(d.gindex), d.gindex, 0, 0, 80, 30, "style_"+d.symbol));
+        }
+        
+        for ( DWire w : net.wireGraph){
+            Object inVert = vertices.get(w.fromGate.gindex);
+            Object outVert = vertices.get(w.toGate.gindex);
+            jgraphx.insertEdge(parent, null, "", inVert, outVert);
+        }
+    }
 //    
-//    private void checkForErrors(NetListTransition net, ParsedUCF ucf) throws Exceptions, JSONException{
-//        for( MuGate d : net.gates ){
-//            //TODO: Skip input and piutput gates 
-//            if(d.type.equals("input") || d.type.equals("output")){
-//                continue;
-//            }
-//            else{
-//                //Check if all operators occuring in netlist are in ucf
-//                if(!(ucf.opMap.keySet().contains(d.symbol))){
-//                    //if not
-//                    throw new Exceptions("Dgate operator "+d.symbol+" not found in UCF");
-//                }
-//                for(String op: ucf.opMap.keySet()){
-//                    if(d.symbol.equals(op)){
-//                        JSONObject opObj = ucf.opMap.get(op);       //
-//                        //check that number of inputs match and only 1 output
-//                        if(d.input.size() != opObj.getInt("inputs"))
-//                        {
-//                            throw new Exceptions("DGate "+d.gname+" has incorrect number of inputs");
-//                        } 
-//                        else if ( opObj.getInt("outputs") != 1){
-//                            throw new Exceptions("DGate "+d.gname+" has incorrect number of outputs");
-//                        }
-//                                
-//                        //add the primitave as the MuGate's primitive
-////                        d.addOpInfo(opObj);
-//                    }
-//                }
-//            }
-//        }        
-//    }
+    private void checkForErrors(NetListTransition net, ParsedUCF ucf) throws Exceptions, JSONException{
+        for( DGate d : net.gateGraph ){
+            //TODO: Skip input and piutput gates 
+            if(d.gtype == DGateType.uF_IN || d.gtype == DGateType.uF_OUT)   continue;
+            else{
+                //Check if all operators occuring in netlist are in ucf
+                if(!(ucf.opMap.keySet().contains(d.symbol))){
+                    //if not
+                    throw new Exceptions("Dgate operator "+d.symbol+" not found in UCF");
+                }
+                for(String op: ucf.opMap.keySet()){
+                    if(d.symbol.equals(op)){
+                        JSONObject opObj = ucf.opMap.get(op);       //
+                        //check that number of inputs match and only 1 output
+                        if(d.input.size() != opObj.getInt("inputs"))
+                        {
+                            throw new Exceptions("DGate "+d.gname+" has incorrect number of inputs");
+                        } 
+                        else if ( opObj.getInt("outputs") != 1){
+                            throw new Exceptions("DGate "+d.gname+" has incorrect number of outputs");
+                        }                                
+                    }
+                }
+            }
+        }        
+    }
 //    
 //    
 //    //old E code for testing custom images... Doesn't work?
@@ -135,15 +133,15 @@ public class GraphTranslation{
 //        return g;
 //    }
 //
-//    private void generateStyles(ParsedUCF ucf) throws JSONException {
-//         for( String op : ucf.opMap.keySet() ){
-//            JSONObject opObj = ucf.opMap.get(op);
-//            String styleName = "style_" + op;
-//            Map<String, Object> style = new HashMap<>();
-//            style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_IMAGE);
-//            style.put(mxConstants.STYLE_IMAGE, opObj.getString("picpath"));
-//            style.put(mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_BOTTOM);
-//            styleSheet.putCellStyle(styleName, style);  
-//        }
-//    }
+    private void generateStyles(ParsedUCF ucf) throws JSONException {
+         for( String op : ucf.opMap.keySet() ){
+            JSONObject opObj = ucf.opMap.get(op);
+            String styleName = "style_" + op;
+            Map<String, Object> style = new HashMap<>();
+            style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_IMAGE);
+            style.put(mxConstants.STYLE_IMAGE, opObj.getString("picpath"));
+            style.put(mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_BOTTOM);
+            styleSheet.putCellStyle(styleName, style);  
+        }
+    }
 }
