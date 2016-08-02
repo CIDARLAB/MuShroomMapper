@@ -109,12 +109,12 @@ public class Main
             */
             
         //Create Mint file from netlist graph and parsed ucf
-            System.out.println("Creating Mint file output...");
-            Scanner ufNameInput = new Scanner(System.in);  //Reading from System.in
+//            System.out.println("Creating Mint file output...");
+//            Scanner ufNameInput = new Scanner(System.in);  //Reading from System.in
             //System.out.println("What would you like to name your .uf file? ");
             //String fileName = ufNameInput.nextLine();
-            String fileName = "testMINT.uf";
-            CreateMint cm = new CreateMint(nlt, ucf, fileName, 100);
+            String fileName = "testDevice.uf";
+            CreateMint cm = new CreateMint(nlt, ucf, fileName);
             //processMintDevice(fileName, "SampleInput/fluigi.ini", "sej");
             System.out.println("MM is all done!");
             System.exit(0);

@@ -22,6 +22,8 @@ import org.json.JSONObject;
 public class ParsedUCF {
     
     public Map<String, JSONObject> opMap = new HashMap();
+    public int channelWidth;
+    public int portRadius;
     
     ParsedUCF(String ucfPath) throws FileNotFoundException, JSONException
     {
@@ -29,6 +31,12 @@ public class ParsedUCF {
         JSONArray opArray = new JSONArray(ucfString);                                   //make string a JSONArray
         for(int n = 0; n < opArray.length(); n++)                                       //place each JSONObject in JSONArray into map as <JSONObject.operator, JSONObject
         {
+            if (n == 0)                                             //the general info block
+            {
+                JSONObject opObj = opArray.getJSONObject(n);        //grabbing JSONObject
+                channelWidth = opObj.getInt("channelWidth");
+                portRadius = opObj.getInt("portRadius");
+            }
             JSONObject opObj = opArray.getJSONObject(n);        //grabbing JSONObject                               
             String operator = opObj.getString("operator");      //grabbing operator attribute of JSONObject
             opMap.put(operator, opObj);                         //placing operator, JSONObject into map

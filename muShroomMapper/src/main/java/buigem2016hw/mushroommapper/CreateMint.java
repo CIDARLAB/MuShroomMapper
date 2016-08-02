@@ -32,7 +32,7 @@ public class CreateMint {
     String flowDevices = "";
     String flowChannels = "";
     //control sections
-    String controlInPorts = "";
+    public String controlInPorts = "";        //need to fix 
     String controlOutPorts = "";
     String controlPorts = "";
     String controlDevices = "";
@@ -50,11 +50,15 @@ public class CreateMint {
     int controlDeviceCount = 0;
     int controlChannelCount = 0;
 
-    String portRadius = "100"; //to be connected with GUI
+     //to be connected with UCF
 
 //    List<String> channelList;   
-    public CreateMint(NetListTransition graph, ParsedUCF ucf, String fileName, int channelWidth) throws UnsupportedEncodingException, FileNotFoundException, JSONException, IOException {
-        for (DGate dg : graph.gateGraph) {
+    public CreateMint(NetListTransition graph, ParsedUCF ucf, String fileName) throws UnsupportedEncodingException, FileNotFoundException, JSONException, IOException 
+    {
+    int portRadius = ucf.portRadius;
+    int channelWidth = ucf.channelWidth;
+        for (DGate dg : graph.gateGraph) 
+        {
             switch (dg.gtype) {
                 case uF:
                     switch (dg.layer) {
@@ -94,6 +98,7 @@ public class CreateMint {
 
                             dg.isWritten = true;
                             flowInPortCount++;
+                            dg.bankCount = flowInPortCount;
                             break;
 
                         case control:                               //control inport
@@ -102,6 +107,7 @@ public class CreateMint {
 
                             dg.isWritten = true;
                             controlInPortCount++;
+                            dg.bankCount = controlInPortCount;
                             break;
 
                         default:
@@ -149,9 +155,10 @@ public class CreateMint {
                         //inTermsArray = dw.toGate.opInfo.getJSONArray("inputTerms");     //need to be catch all with if inTermsFlag
 
                         currentInTerm = dw.toGate.opInfo.getInt("controlTerms");
-
+                        
                         controlChannels += "CHANNEL controlChannel" + controlChannelCount + " from ";
-                        controlChannels += dw.fromGate.mintName + " " + dw.fromGate.outTermVal + " to ";
+                        controlChannels += dw.fromGate.mintName + " " + dw.fromGate.outTermVal + " to ";            //port way
+//                        controlChannels += "CBank" + " " + dw.fromGate.bankCount + " to ";                        //bank way
                         controlChannels += dw.toGate.mintName + " " + currentInTerm + " w=" + channelWidth + ";\n";
                         dw.isWritten = true;
                         controlChannelCount++;
@@ -168,7 +175,8 @@ public class CreateMint {
                         }
 
                         flowChannels += "CHANNEL flowChannel" + flowChannelCount + " from ";
-                        flowChannels += dw.fromGate.mintName + " " + dw.fromGate.outTermVal + " to ";
+                        flowChannels += dw.fromGate.mintName + " " + dw.fromGate.outTermVal + " to ";             //port way
+//                        flowChannels += "FBank" + " " + dw.fromGate.bankCount + " to ";                             //bank way
                         flowChannels += dw.toGate.mintName + " " + currentInTerm + " w=" + channelWidth + ";\n";
                         dw.isWritten = true;
                         flowChannelCount++;
@@ -204,10 +212,17 @@ public class CreateMint {
                         break;
 
                     case fchannel:
-                        inTermsArray = dw.toGate.opInfo.getJSONArray("inputTerms");     //need to be catch all with if inTermsFlag
-                        currentInTerm = inTermsArray.getInt(dw.toGate.inTermInd);
-                        dw.toGate.inTermInd++;
-
+                        if (dw.toGate.layer.equals(LayerType.control)) 
+                        {
+                            currentInTerm = dw.toGate.opInfo.getInt("inputTerms");      //not permanent
+                        } 
+                        else 
+                        {
+                            inTermsArray = dw.toGate.opInfo.getJSONArray("inputTerms");
+                            currentInTerm = inTermsArray.getInt(dw.toGate.inTermInd);
+                            dw.toGate.inTermInd++;
+                        }
+                        
                         currentOutTerm = dw.fromGate.opInfo.getInt("outputTerms");
 
                         flowChannels += "CHANNEL flowChannel" + flowChannelCount + " from ";
@@ -224,26 +239,30 @@ public class CreateMint {
                 }
                     }
                     }
-        flowPorts = flowInPorts + flowOutPorts;
-        flowPorts = flowPorts.substring(0, flowPorts.length() - 1);   //removing extra comma
-
-        controlPorts = controlInPorts + controlOutPorts;
-        controlPorts = controlPorts.substring(0, controlPorts.length() - 1); //removing extra comma
-
-        printMint(fileName);
-    }
-
-    public void printMint(String fileName) throws FileNotFoundException, UnsupportedEncodingException {
+        if (flowInPortCount + flowOutPortCount > 0)
+        {
+            flowPorts = flowInPorts + flowOutPorts;
+            flowPorts = flowPorts.substring(0, flowPorts.length() - 1);   //removing extra comma
+        }
+        
+        if (controlInPortCount + controlOutPortCount > 0)
+        {
+            controlPorts = controlInPorts + controlOutPorts;
+            controlPorts = controlPorts.substring(0, controlPorts.length() - 1); //removing extra comma
+        }
+        String deviceName = fileName.substring(0,fileName.length()-3);
+        
         PrintWriter mintWriter = new PrintWriter(fileName, "UTF-8");
         mintWriter.println("# .uf output by muShroomMapper");
-        mintWriter.println("3D DEVICE testDevice");
+        mintWriter.println("3D DEVICE " + deviceName);                     //TODO: make 3D device a flag
         mintWriter.println("");
         
         mintWriter.println("LAYER FLOW\n\n");
 
-        mintWriter.println("PORT " + flowPorts + " r=" + portRadius + ";\n");
+        mintWriter.println("PORT " + flowPorts + " r=" + portRadius + ";\n");     //because multiple ports are bugged in fluigi
+//        mintWriter.println("V BANK FBank of " + flowInPortCount + " PORT r=" + portRadius + " dir=RIGHT spacing=3000 channelWidth=" + channelWidth + ";");
         mintWriter.println(flowDevices);
-        mintWriter.println(controlDevices); //because 3dvalve is bugged in fluigi
+        mintWriter.println(controlDevices); // this is in flow because 3dvalve is bugged in fluigi
         mintWriter.println(flowChannels);
 
         mintWriter.println("");
@@ -252,8 +271,9 @@ public class CreateMint {
 
         mintWriter.println("LAYER CONTROL\n\n");
 
-        mintWriter.println("PORT " + controlPorts + " r=" + portRadius + ";\n");
-        // mintWriter.println(controlDevices); //because 3dvalve is bugged in fluigi
+        mintWriter.println("PORT " + controlPorts + " r=" + portRadius + ";\n");  //because multiple ports are bugged in fluigi
+//        if (controlInPortCount > 0) mintWriter.println("H BANK CBank of " + controlInPortCount + " PORT r=" + portRadius + " dir=UP spacing=2500 channelWidth=" + channelWidth + ";");
+//        mintWriter.println(controlDevices); //because 3dvalve is bugged in fluigi
         mintWriter.println(controlChannels);
 
         mintWriter.println("");

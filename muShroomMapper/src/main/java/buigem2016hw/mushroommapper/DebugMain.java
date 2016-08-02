@@ -15,14 +15,20 @@ import org.json.JSONException;
  *
  * @author Shane
  */
-public class DebugMain {
+public class DebugMain 
+{
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws FileNotFoundException, JSONException, IOException {
-        //Read in ucf
-            String ucfPath = "ucf.json";     //path for debugging
+    
+    public static void main(String[] args) throws FileNotFoundException, JSONException, IOException 
+    {
+               //Read in ucf
+            Scanner reader = new Scanner(System.in);  // Reading from System.in
+//           System.out.println("Enter path/to/UCFFile: ");
+//            String ucfPath = reader.nextLine(); // reads in filepath
+            String ucfPath = "ucf.json";     //temp path for debugging
             System.out.println("Reading UCF...");
             ParsedUCF ucf = new ParsedUCF(ucfPath);
 
@@ -43,9 +49,13 @@ public class DebugMain {
         
         //Create Mint file from netlist graph and parsed ucf
             System.out.println("Creating Mint file output...");
-            String fileName = "testMINT.uf";
-            CreateMint cm = new CreateMint(nlt, ucf, fileName, 100);
-            processMintDevice(fileName, "SampleInput/fluigi.ini", "sej", true);
+            Scanner ufNameInput = new Scanner(System.in);  //Reading from System.in
+            System.out.println("What would you like to name your .uf file? ");
+            String fileName = ufNameInput.nextLine();
+//            String fileName = "debugDevice.uf";
+            CreateMint cm = new CreateMint(nlt, ucf, fileName);
+            System.out.println("Entering Fluigi");
+            processMintDevice(fileName, "fluigi.ini", "sej", true);
             System.out.println("MM is all done!");
             System.exit(0);
     }
