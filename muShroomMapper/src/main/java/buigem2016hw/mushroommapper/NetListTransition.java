@@ -8,6 +8,7 @@ package buigem2016hw.mushroommapper;
 import java.util.ArrayList;
 import java.util.List;
 import org.cellocad.BU.dom.DGate;
+import org.cellocad.BU.dom.DGateType;
 import org.cellocad.BU.dom.DWire;
 import org.cellocad.BU.dom.LayerType;
 import org.cellocad.BU.fluigi.VerilogFluigiGrammar;
@@ -27,6 +28,8 @@ public class NetListTransition
     VerilogFluigiWalker walker;
     public List<DGate> gateGraph = new ArrayList<>();
     public List<DWire> wireGraph = new ArrayList<>();
+    public List<DGate> fluidInputs = new ArrayList<>();
+    public ArrayList<ArrayList<DGate>> fluidLines = new ArrayList<ArrayList<DGate>>();
        
     public NetListTransition(ParsedUCF ucf, String vFilePath) throws JSONException
     {
@@ -71,6 +74,7 @@ public class NetListTransition
                     {
                         dg.outTermVal = 2;
                         dg.inTermVal = -1;                          //an input gate doesn't have an input from any other gate
+                        fluidInputs.add(dg);
                     }
                     else if (dg.layer == LayerType.control)
                     {
@@ -95,5 +99,20 @@ public class NetListTransition
             }
         }
         gateGraph = walker.netlist;
+    } 
+    public void fluidLiner()        //tracing fluidLines in microfluidic device
+    {
+        DGate currentGate;
+        int lineCount = 0;
+        for (DGate startPoint:fluidInputs)
+        {
+            currentGate = startPoint;
+            while (currentGate.gtype != DGateType.uF_OUT)
+            {
+                (fluidLines.get(lineCount)).add(currentGate);
+                currentGate = currentGate.output.toGate;
+            }
+            lineCount++;
+        }
     }    
 }
