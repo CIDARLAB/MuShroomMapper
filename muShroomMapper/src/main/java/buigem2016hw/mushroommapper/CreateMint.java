@@ -59,9 +59,11 @@ public class CreateMint {
     int channelWidth = ucf.channelWidth;
         for (DGate dg : graph.gateGraph) 
         {
-            switch (dg.gtype) {
+            switch (dg.gtype) 
+            {
                 case uF:
-                    switch (dg.layer) {
+                    switch (dg.layer) 
+                    {
                         case flow:
                             String fDevLine = dg.opInfo.getString("mint") + ";";
                             fDevLine = fDevLine.replaceAll("NAME", "fDevice" + flowDeviceCount + "_" + dg.opInfo.getString("name"));
@@ -73,7 +75,7 @@ public class CreateMint {
                             flowDeviceCount++;
                             break;
 
-                        case control:       //TODO: test how control devices print
+                        case control:       
                             String cDevLine = dg.opInfo.getString("mint") + ";";
                             cDevLine = cDevLine.replaceAll("NAME", "cDevice" + controlDeviceCount + "_" + dg.opInfo.getString("name"));
                             dg.mintName = "cDevice" + controlDeviceCount + "_" + dg.opInfo.getString("name");
@@ -91,7 +93,8 @@ public class CreateMint {
                     break;
 
                 case uF_IN:                                         //inport
-                    switch (dg.layer) {
+                    switch (dg.layer) 
+                    {
                         case flow:                                  //flow inport
                             flowInPorts += "flowInPort" + flowInPortCount + ",";
                             dg.mintName = "flowInPort" + flowInPortCount;
@@ -117,7 +120,8 @@ public class CreateMint {
                             break;
                         
                 case uF_OUT:
-                    switch (dg.layer) {
+                    switch (dg.layer) 
+                    {
                         case flow:
                             flowOutPorts += "outPort" + flowOutPortCount + ",";
                             dg.mintName = "outPort" + flowOutPortCount;
@@ -145,12 +149,15 @@ public class CreateMint {
             }
         }
 
-        for (DWire dw : graph.wireGraph) {
+        for (DWire dw : graph.wireGraph) 
+        {
             int currentInTerm;
             int currentOutTerm;
             JSONArray inTermsArray;
-            if (dw.isWritten == false) {
-                switch (dw.wtype) {
+            if (dw.isWritten == false) 
+            {
+                switch (dw.wtype) 
+                {
                     case cinput:
                         //inTermsArray = dw.toGate.opInfo.getJSONArray("inputTerms");     //need to be catch all with if inTermsFlag
 
@@ -166,9 +173,12 @@ public class CreateMint {
                         break;
 
                     case finput:
-                        if (dw.toGate.layer.equals(LayerType.control)) {
+                        if (dw.toGate.layer.equals(LayerType.control)) 
+                        {
                             currentInTerm = dw.toGate.opInfo.getInt("inputTerms");
-                        } else {
+                        } 
+                        else 
+                        {
                             inTermsArray = dw.toGate.opInfo.getJSONArray("inputTerms");
                             currentInTerm = inTermsArray.getInt(dw.toGate.inTermInd);
                             dw.toGate.inTermInd++;
