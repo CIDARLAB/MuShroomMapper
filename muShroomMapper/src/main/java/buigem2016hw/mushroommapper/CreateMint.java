@@ -260,7 +260,7 @@ public class CreateMint {
             controlPorts = controlInPorts + controlOutPorts;
             controlPorts = controlPorts.substring(0, controlPorts.length() - 1); //removing extra comma
         }
-        String deviceName = fileName.substring(0,fileName.length()-3);
+        String deviceName = graph.deviceName;
         
         PrintWriter mintWriter = new PrintWriter(fileName, "UTF-8");
         mintWriter.println("# .uf output by muShroomMapper");

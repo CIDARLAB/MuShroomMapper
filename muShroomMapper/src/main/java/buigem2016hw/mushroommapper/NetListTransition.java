@@ -26,6 +26,7 @@ public class NetListTransition
     public String filepath;
     public String line;
     VerilogFluigiWalker walker;
+    public String deviceName;
     public List<DGate> gateGraph = new ArrayList<>();
     public List<DWire> wireGraph = new ArrayList<>();
     public List<DGate> fluidInputs = new ArrayList<>();
@@ -37,7 +38,7 @@ public class NetListTransition
         line = Utilities.getFileContentAsString(vFilePath);
         walker = VerilogFluigiGrammar.getuFWalker(line);
         int gateCount=0;           //counts the number of gates throughout for use with IDing gates for visualization
-        
+        deviceName = walker.details.modulename;
         for(DGate dg:walker.netlist)
         {
             switch(dg.gtype)

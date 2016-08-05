@@ -49,13 +49,14 @@ public class DebugMain
         
         //Create Mint file from netlist graph and parsed ucf
             System.out.println("Creating Mint file output...");
-            Scanner ufNameInput = new Scanner(System.in);  //Reading from System.in
-            System.out.println("What would you like to name your .uf file? ");
-            String fileName = ufNameInput.nextLine();
+            //Scanner ufNameInput = new Scanner(System.in);  //Reading from System.in
+            //System.out.println("What would you like to name your .uf file? ");
+            //String fileName = ufNameInput.nextLine();
 //            String fileName = "debugDevice.uf";
-            CreateMint cm = new CreateMint(nlt, ucf, fileName);
+            String ufFileName = nlt.deviceName + ".uf";
+            CreateMint cm = new CreateMint(nlt, ucf, "output/"+ufFileName);
             System.out.println("Entering Fluigi");
-            processMintDevice(fileName, "fluigi.ini", "sej", true);
+            processMintDevice("output/"+ufFileName, "fluigi.ini", "sej", true);
             System.out.println("MM is all done!");
             System.exit(0);
     }
