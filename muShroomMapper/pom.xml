@@ -37,9 +37,9 @@
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>org.cidar</groupId>
-            <artifactId>fluigi</artifactId>
-            <version>0.2.2.1</version>
+            <groupId>org.cidarlab.fluigi</groupId>
+            <artifactId>Fluigi</artifactId>
+            <version>0.2</version>
         </dependency>
     </dependencies>
     <properties>
