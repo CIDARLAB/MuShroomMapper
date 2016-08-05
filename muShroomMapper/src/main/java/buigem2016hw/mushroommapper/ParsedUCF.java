@@ -36,6 +36,7 @@ public class ParsedUCF {
                 JSONObject opObj = opArray.getJSONObject(n);        //grabbing JSONObject
                 channelWidth = opObj.getInt("channelWidth");
                 portRadius = opObj.getInt("portRadius");
+                continue;
             }
             JSONObject opObj = opArray.getJSONObject(n);        //grabbing JSONObject                               
             String operator = opObj.getString("operator");      //grabbing operator attribute of JSONObject
