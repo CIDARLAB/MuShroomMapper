@@ -1,9 +1,16 @@
 *
 !/**/
 !*.*
-/target/
 muShroomMapper/target/
+muShroomMapper/output/
+muShroomMapper/ufLibrary/
+muShroomMapper/data/
 *.uf
+*_log.txt
 *.json
 *.v
+*.eps
+*.svg
+*.ini
 nb-configuration.xml
+nbactions.xml
