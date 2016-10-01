@@ -7,7 +7,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.lang.String;
 import org.cellocad.BU.dom.DGate;
 import org.cellocad.BU.dom.DGateType;
 import org.cellocad.BU.dom.DWire;
@@ -21,7 +20,8 @@ import org.json.JSONArray;
  *
  * @author Shane
  */
-public class CreateMint {
+public class CreateMint 
+{
 //    String line = "";
     //initializing MINT sections to print
     //flow sections
@@ -163,8 +163,13 @@ public class CreateMint {
 
                         currentInTerm = dw.toGate.opInfo.getInt("controlTerms");
                         
+                        //these if/else for new up valves (to make sure that orientation is correct)
+                        if(currentInTerm == 1) currentOutTerm = 3;
+                        else currentOutTerm = 1;
+                        
                         controlChannels += "CHANNEL controlChannel" + controlChannelCount + " from ";
-                        controlChannels += dw.fromGate.mintName + " " + dw.fromGate.outTermVal + " to ";            //port way
+                        //controlChannels += dw.fromGate.mintName + " " + dw.fromGate.outTermVal + " to ";            //port way - commented out for new up valves
+                        controlChannels += dw.fromGate.mintName + " " + currentOutTerm + " to ";            //port way - new up valve way
 //                        controlChannels += "CBank" + " " + dw.fromGate.bankCount + " to ";                        //bank way
                         controlChannels += dw.toGate.mintName + " " + currentInTerm + " w=" + channelWidth + ";\n";
                         dw.isWritten = true;
