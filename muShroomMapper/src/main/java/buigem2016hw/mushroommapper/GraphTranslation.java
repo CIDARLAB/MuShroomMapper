@@ -5,9 +5,9 @@
  */
 package buigem2016hw.mushroommapper;
 
-import com.mxgraph.util.mxConstants;
-import com.mxgraph.view.mxGraph;
-import com.mxgraph.view.mxStylesheet;
+//import com.mxgraph.util.mxConstants;
+//import com.mxgraph.view.mxGraph;
+//import com.mxgraph.view.mxStylesheet;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
@@ -21,9 +21,9 @@ import javax.imageio.ImageIO;
 import org.cellocad.BU.dom.DGate;
 import org.cellocad.BU.dom.DGateType;
 import org.cellocad.BU.dom.DWire;
-import org.jgrapht.DirectedGraph;
-import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.graph.DefaultEdge;
+//import org.jgrapht.DirectedGraph;
+//import org.jgrapht.graph.DefaultDirectedGraph;
+//import org.jgrapht.graph.DefaultEdge;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,9 +34,10 @@ import org.json.JSONObject;
 
 /*To do: 
     Consider abandoning JGraphX (Will its visualization fit into the overall Fluigi flow's GUI? 
-    Move error checking elsewhere? It doesn't seem logical here...
+    Move error checking elsewhere? It doesn't seem logical here... Commenting out for now.
 */
 public class GraphTranslation{
+/*
     public mxGraph jgraphx = new mxGraph();
     mxStylesheet styleSheet = jgraphx.getStylesheet();
     Object parent = jgraphx.getDefaultParent();
@@ -144,4 +145,5 @@ public class GraphTranslation{
             styleSheet.putCellStyle(styleName, style);  
         }
     }
+*/
 }

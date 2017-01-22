@@ -4,13 +4,17 @@
  * and open the template in the editor.
  */
 package buigem2016hw.mushroommapper;
-
+/*
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.layout.mxCompactTreeLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.ext.JGraphXAdapter;
+import org.jgrapht.graph.DefaultEdge;
+*/
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
@@ -18,9 +22,6 @@ import java.util.Hashtable;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 import static javax.swing.SwingConstants.*;
-import org.jgrapht.DirectedGraph;
-import org.jgrapht.ext.JGraphXAdapter;
-import org.jgrapht.graph.DefaultEdge;
 
 /**
  *
@@ -28,9 +29,10 @@ import org.jgrapht.graph.DefaultEdge;
  */
 
 //To do: Will this work with the Fluigi flow GUI?
-
+//Commenting out for now. Removing JGraphX/T
 public class Visualization extends JApplet{
     // 
+    /*
     private static final Color DEFAULT_BG_COLOR = Color.decode("#FAFBFF");
     private static final Dimension DEFAULT_SIZE = new Dimension(1000, 750);
     
@@ -52,4 +54,5 @@ public class Visualization extends JApplet{
         frame.pack();
         frame.setVisible(true);
     }
+    */
 }
