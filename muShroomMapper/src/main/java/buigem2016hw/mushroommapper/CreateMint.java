@@ -161,7 +161,7 @@ public class CreateMint
                     case cinput:
                         //inTermsArray = dw.toGate.opInfo.getJSONArray("inputTerms");     //need to be catch all with if inTermsFlag
 
-                        currentInTerm = dw.toGate.opInfo.getInt("controlTerms");
+                        currentInTerm = dw.toGate.get(0).opInfo.getInt("controlTerms");
                         
                         //these if/else for new up valves (to make sure that orientation is correct)
                         if(currentInTerm == 1) currentOutTerm = 3;
@@ -178,21 +178,21 @@ public class CreateMint
                         break;
 
                     case finput:
-                        if (dw.toGate.layer.equals(LayerType.control)) 
+                        if (dw.toGate.get(0).layer.equals(LayerType.control)) 
                         {
-                            currentInTerm = dw.toGate.opInfo.getInt("inputTerms");
+                            currentInTerm = dw.toGate.get(0).opInfo.getInt("inputTerms");
                         } 
                         else 
                         {
-                            inTermsArray = dw.toGate.opInfo.getJSONArray("inputTerms");
-                            currentInTerm = inTermsArray.getInt(dw.toGate.inTermInd);
-                            dw.toGate.inTermInd++;
+                            inTermsArray = dw.toGate.get(0).opInfo.getJSONArray("inputTerms");
+                            currentInTerm = inTermsArray.getInt(dw.toGate.get(0).inTermInd);
+                            dw.toGate.get(0).inTermInd++;
                         }
 
                         flowChannels += "CHANNEL flowChannel" + flowChannelCount + " from ";
                         flowChannels += dw.fromGate.mintName + " " + dw.fromGate.outTermVal + " to ";             //port way
 //                        flowChannels += "FBank" + " " + dw.fromGate.bankCount + " to ";                             //bank way
-                        flowChannels += dw.toGate.mintName + " " + currentInTerm + " w=" + channelWidth + ";\n";
+                        flowChannels += dw.toGate.get(0).mintName + " " + currentInTerm + " w=" + channelWidth + ";\n";
                         dw.isWritten = true;
                         flowChannelCount++;
 
@@ -210,7 +210,7 @@ public class CreateMint
 
                         break;
 
-                    case foutput:
+                    case foutput:       //need to for through toGate/merge/split wires
                         currentInTerm = dw.toGate.inTermVal;
                         currentOutTerm = dw.fromGate.opInfo.getInt("outputTerms");     //need to be catch all with outTermFlag, be done with JSON parsing by translation, store terms int object attribute?
 
@@ -226,7 +226,7 @@ public class CreateMint
                         //to be inplemented
                         break;
 
-                    case fchannel:
+                    case fchannel:      //need to for through toGate
                         if (dw.toGate.layer.equals(LayerType.control)) 
                         {
                             currentInTerm = dw.toGate.opInfo.getInt("inputTerms");      //not permanent
@@ -285,10 +285,14 @@ public class CreateMint
         mintWriter.println("");
 
         mintWriter.println("LAYER CONTROL\n\n");
-
-        mintWriter.println("PORT " + controlPorts + " r=" + portRadius + ";\n");  //because multiple ports are bugged in fluigi
+        
+        if (controlInPortCount + controlOutPortCount > 0)   //if no ports, don't print port
+        {
+          mintWriter.println("PORT " + controlPorts + " r=" + portRadius + ";\n");  //because multiple ports are bugged in fluigi
 //        if (controlInPortCount > 0) mintWriter.println("H BANK CBank of " + controlInPortCount + " PORT r=" + portRadius + " dir=UP spacing=2500 channelWidth=" + channelWidth + ";");
-//        mintWriter.println(controlDevices); //because 3dvalve is bugged in fluigi
+//        mintWriter.println(controlDevices); //because 3dvalve is bugged in fluigi   
+        }
+
         mintWriter.println(controlChannels);
 
         mintWriter.println("");
