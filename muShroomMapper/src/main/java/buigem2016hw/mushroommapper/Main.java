@@ -115,7 +115,7 @@ public class Main
             //String fileName = ufNameInput.nextLine();
             String fileName = "testDevice.uf";
             CreateMint cm = new CreateMint(nlt, ucf, fileName);
-            //processMintDevice(fileName, "SampleInput/fluigi.ini", "sej");
+            //processMintDevice(fileName, "SampleInput/fluigi.ini", "sej");     //old code from when MM called Fluigi method
             System.out.println("MM is all done!");
             System.exit(0);
         }
