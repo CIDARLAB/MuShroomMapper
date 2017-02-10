@@ -31,12 +31,12 @@ public class ParsedUCF {
         JSONArray opArray = new JSONArray(ucfString);                                   //make string a JSONArray
         for(int n = 0; n < opArray.length(); n++)                                       //place each JSONObject in JSONArray into map as <JSONObject.operator, JSONObject
         {
-            if (n == 0)                                             //the general info block
+            if (n == 0)                                             //the general info block -- could reformat to bring this out of loop
             {
                 JSONObject opObj = opArray.getJSONObject(n);        //grabbing JSONObject
                 channelWidth = opObj.getInt("channelWidth");
                 portRadius = opObj.getInt("portRadius");
-                continue;
+                continue;   //moving to next block
             }
             JSONObject opObj = opArray.getJSONObject(n);        //grabbing JSONObject                               
             String operator = opObj.getString("operator");      //grabbing operator attribute of JSONObject
