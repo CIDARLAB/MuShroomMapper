@@ -6,6 +6,7 @@
 package buigem2016hw.mushroommapper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.cellocad.BU.dom.DGate;
 import org.cellocad.BU.dom.DGateType;
@@ -30,7 +31,8 @@ public class NetListTransition
     public List<DGate> gateGraph = new ArrayList<>();
     public List<DWire> wireGraph = new ArrayList<>();
     public List<DGate> fluidInputs = new ArrayList<>();
-    public ArrayList<ArrayList<DGate>> fluidLines = new ArrayList<ArrayList<DGate>>();
+    //public ArrayList<ArrayList<DGate>> fluidLines = new ArrayList<>();
+    public HashMap<DWire, Integer> wireCounter = new HashMap<>();
        
     public NetListTransition(ParsedUCF ucf, String vFilePath) throws JSONException
     {
@@ -66,11 +68,11 @@ public class NetListTransition
                     dg.inTermFlag = true;                   //these operation gates will have their in/outTerm JSONArrays defined in their opInfo
                     dg.outTermFlag = true;
                     
-                    dg.output.fromGate = dg;
+                    dg.output.fromGate = dg;                //the current gate's output wire has it's .fromgate set to the current gate
                     wireGraph.add(dg.output);  
                     for (DWire in:dg.input)
                     {                        
-                        in.toGate = dg; 
+                        in.toGate.add(dg); 
                         wireGraph.add(in);
                     }
                     
@@ -104,7 +106,7 @@ public class NetListTransition
                     
                 case uF_OUT:
                     System.out.println("Graphing output microfluidic gate ");
-                    dg.input.get(0).toGate = dg;
+                    dg.input.get(0).toGate.add(dg);             //inform the wire of the output by placing the output gate in it's toGate list
                     wireGraph.add(dg.input.get(0));
                     
                     dg.inTermVal = 4;
@@ -118,6 +120,7 @@ public class NetListTransition
         }
         gateGraph = walker.netlist;
     } 
+/* Commenting out for now to make wire splitting possible
     public void fluidLiner()        //tracing fluidLines in microfluidic device
     {
         DGate currentGate;
@@ -133,4 +136,5 @@ public class NetListTransition
             lineCount++;
         }
     }    
+*/
 }
