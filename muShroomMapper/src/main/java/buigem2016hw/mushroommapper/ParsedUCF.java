@@ -24,6 +24,7 @@ public class ParsedUCF {
     public Map<String, JSONObject> opMap = new HashMap();
     public int channelWidth;
     public int portRadius;
+    public boolean autoSplitMerge;
     
     ParsedUCF(String ucfPath) throws FileNotFoundException, JSONException
     {
@@ -36,6 +37,7 @@ public class ParsedUCF {
                 JSONObject opObj = opArray.getJSONObject(n);        //grabbing JSONObject
                 channelWidth = opObj.getInt("channelWidth");
                 portRadius = opObj.getInt("portRadius");
+                autoSplitMerge = opObj.getBoolean("automatedSplitMerge");
                 continue;   //moving to next block
             }
             JSONObject opObj = opArray.getJSONObject(n);        //grabbing JSONObject                               

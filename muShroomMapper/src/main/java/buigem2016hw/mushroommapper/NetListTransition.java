@@ -29,97 +29,99 @@ public class NetListTransition
     VerilogFluigiWalker walker;
     public String deviceName;
     public List<DGate> gateGraph = new ArrayList<>();
-    public List<DWire> wireGraph = new ArrayList<>();
+    public List<DWire> wireGraph = new ArrayList<>();   //wire list for use in CreateMint
     public List<DGate> fluidInputs = new ArrayList<>();
     //public ArrayList<ArrayList<DGate>> fluidLines = new ArrayList<>();
     public HashMap<DWire, Integer> wireCounter = new HashMap<>();
-       
+    
     public NetListTransition(ParsedUCF ucf, String vFilePath) throws JSONException
     {
         line = "";
         line = Utilities.getFileContentAsString(vFilePath);
         walker = VerilogFluigiGrammar.getuFWalker(line);
-        int gateCount=0;           //counts the number of gates throughout for use with IDing gates for visualization
+        int gateCount = 0;           //counts the number of gates throughout for use with IDing gates for visualization
         deviceName = walker.details.modulename;
         System.out.println("Creating the microfluidic graph...");
-        for(DGate dg:walker.netlist)
+        for (DGate dg : walker.netlist) 
         {
-            switch(dg.gtype)
+            switch (dg.gtype) 
             {
                 case uF:
-                    System.out.println("Graphing operation microfluidic gate...");  
+                    System.out.println("Graphing operation microfluidic gate...");
                     dg.opInfo = ucf.opMap.get(dg.symbol);   //adding UCF-operator info to each operation gate
-                    
-                    if (dg.opInfo.getString("layer").equals("flow"))
+                    if (dg.opInfo.getString("layer").equals("flow")) 
                     {
                         System.out.println("... On the flow layer...");
                         dg.layer = LayerType.flow;
-                    }                 //filling out layer of uF operation gates
-                    else if (dg.opInfo.getString("layer").equals("control"))
+                    } //filling out layer of uF operation gates
+                    else if (dg.opInfo.getString("layer").equals("control")) 
                     {
                         System.out.println("... On the control layer...");
                         dg.layer = LayerType.control;
+                    } 
+                    else 
+                    {
+                        System.out.println("Operator " + dg.symbol + " without layer attribute! Check UCF!");
                     }
-                    else System.out.println("Operator " + dg.symbol + " without layer attribute! Check UCF!");
-//                    System.out.println("layer: " + dg.layer);
+
                     dg.inTermInd = 0;
                     dg.outTermInd = 0;
-        
+
                     dg.inTermFlag = true;                   //these operation gates will have their in/outTerm JSONArrays defined in their opInfo
                     dg.outTermFlag = true;
-                    
-                    dg.output.fromGate = dg;                //the current gate's output wire has it's .fromgate set to the current gate
-                    wireGraph.add(dg.output);  
-                    for (DWire in:dg.input)
-                    {                        
-                        in.toGate.add(dg); 
-                        wireGraph.add(in);
+
+                    dg.output.fromGate = dg;                //set the current gate's output wire's .fromgate to the current gate
+                    wireGraph.add(dg.output);
+                    for (DWire in : dg.input) //running through the current gates inputs
+                    {
+                        in.toGate = dg;                  //set the current gate's input wire's .togate to the current gate
+                        wireGraph.add(in);                  //adding all wires to a list for later access
                     }
-                    
+
                     dg.gindex = gateCount;
                     gateCount++;
                     System.out.println("Done with gate.");
                     break;
-                    
-                case uF_IN:  
+
+                case uF_IN:
                     System.out.println("Graphing input microfluidic gate...");
                     dg.output.fromGate = dg;
                     wireGraph.add(dg.output);
-                    if (dg.layer == LayerType.flow)
+                    if (dg.layer == LayerType.flow) 
                     {
                         System.out.println("... On the flow layer...");
                         dg.outTermVal = 2;
                         dg.inTermVal = -1;                          //an input gate doesn't have an input from any other gate
                         fluidInputs.add(dg);
-                    }
-                    else if (dg.layer == LayerType.control)
+                    } 
+                    else if (dg.layer == LayerType.control) 
                     {
                         System.out.println("... On the control layer...");
                         dg.outTermVal = 1;
-                        dg.inTermVal = -1;       
+                        dg.inTermVal = -1;
                     }
-                                   
+
                     dg.gindex = gateCount;
                     gateCount++;
                     System.out.println("Done with gate.");
                     break;
-                    
+
                 case uF_OUT:
                     System.out.println("Graphing output microfluidic gate ");
-                    dg.input.get(0).toGate.add(dg);             //inform the wire of the output by placing the output gate in it's toGate list
+                    dg.input.get(0).toGate = dg;             //inform the wire of the output by placing the output gate in it's toGate list
                     wireGraph.add(dg.input.get(0));
-                    
+
                     dg.inTermVal = 4;
                     dg.outTermVal = -1;                        //an output gate doesn't output to any other gate
-                    
+
                     dg.gindex = gateCount;
                     gateCount++;
                     System.out.println("Done with gate.");
-                    break;       
+                    break;
             }
         }
         gateGraph = walker.netlist;
-    } 
+    }
 /* Commenting out for now to make wire splitting possible
     public void fluidLiner()        //tracing fluidLines in microfluidic device
     {

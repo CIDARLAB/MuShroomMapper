@@ -4,14 +4,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.cellocad.BU.dom.DGate;
 import org.cellocad.BU.dom.DGateType;
 import org.cellocad.BU.dom.DWire;
+import org.cellocad.BU.dom.DWireType;
 import org.cellocad.BU.dom.LayerType;
 import org.json.JSONException;
 import org.json.JSONArray;
@@ -59,104 +58,130 @@ public class CreateMint
     {
         int portRadius = ucf.portRadius;
         int channelWidth = ucf.channelWidth;
-        if (ucf.autoSplitMerge == true) //
+        if (ucf.autoSplitMerge == true) //when UCF option of automerging and splitting is enabled
         {
             System.out.println("With automerging/splitting of channels enabled...");
-        } else //normal non automerge/split
-        {
-            System.out.println("With no extra settings enabled...");
+            inputCloneFinder(graph.gateGraph);
+//        } 
+//        else //normal non automerge/split
+//        {
+//            System.out.println("With no extra settings enabled...");
             for (DGate dg : graph.gateGraph) 
             {
-                switch (dg.gtype) 
+                if (dg.isWritten == false)
                 {
-                    case uF:
-                        switch (dg.layer) 
-                        {
-                            case flow:
-                                String fDevLine = dg.opInfo.getString("mint") + ";";
-                                fDevLine = fDevLine.replaceAll("NAME", "fDevice" + flowDeviceCount + "_" + dg.opInfo.getString("name"));
-                                dg.mintName = "fDevice" + flowDeviceCount + "_" + dg.opInfo.getString("name");
+                    switch (dg.gtype) 
+                    {
+                        case uF:
+                            switch (dg.layer) 
+                            {
+                                case flow:
+                                    String fDevLine = dg.opInfo.getString("mint") + ";";
+                                    fDevLine = fDevLine.replaceAll("NAME", "fDevice" + flowDeviceCount + "_" + dg.opInfo.getString("name"));
+                                    dg.mintName = "fDevice" + flowDeviceCount + "_" + dg.opInfo.getString("name");
 
-                                flowDevices += fDevLine;
-                                flowDevices += "\n";
-                                dg.isWritten = true;
-                                flowDeviceCount++;
-                                break;
+                                    flowDevices += fDevLine;
+                                    flowDevices += "\n";
+                                    dg.isWritten = true;
+                                    flowDeviceCount++;
 
-                            case control:
-                                String cDevLine = dg.opInfo.getString("mint") + ";";
-                                cDevLine = cDevLine.replaceAll("NAME", "cDevice" + controlDeviceCount + "_" + dg.opInfo.getString("name"));
-                                dg.mintName = "cDevice" + controlDeviceCount + "_" + dg.opInfo.getString("name");
+                                    if(dg.inputClones != null && !(dg.inputClones.isEmpty()))   //writing up MINT for splitting channels for inputClones
+                                    {
+                                        flowDevices += "V TREE fDevice" + flowDeviceCount + "_" + "SplitTree " + dg.inputClones.size() + " to 1 spacing=" + 10*ucf.channelWidth + " flowChannelWidth=" + ucf.channelWidth;
+                                        flowDevices += "\n";
+                                        DGate treeGate = new DGate();
+                                        treeGate.mintName = "fDevice" + flowDeviceCount + "_" + "SplitTree";
+                                        treeGate.isInputClone = true;
+                                        treeGate.inTermVal = 1;
+                                        treeGate.outTermVal = 2;    //need to increment this each time we reference it
+                                        dg.output.fromGate = treeGate;
+                                        for (DGate clone:dg.inputClones)
+                                        {
+                                            clone.output.fromGate = treeGate;
+                                            clone.isWritten = true;
+                                        }
+                                        flowDeviceCount++;
+                                        DWire treeWire = new DWire();
+                                        treeWire.toGate = treeGate;
+                                        treeWire.fromGate = dg;
+                                        treeWire.wtype = DWireType.fchannel;
+                                    }
+                                    break;
 
-                                controlDevices += cDevLine;
-                                controlDevices += "\n";
-                                dg.isWritten = true;
-                                controlDeviceCount++;
-                                break;
+                                case control:
+                                    String cDevLine = dg.opInfo.getString("mint") + ";";
+                                    cDevLine = cDevLine.replaceAll("NAME", "cDevice" + controlDeviceCount + "_" + dg.opInfo.getString("name"));
+                                    dg.mintName = "cDevice" + controlDeviceCount + "_" + dg.opInfo.getString("name");
 
-                            default:
-                                System.out.println("unlayered gate! UCF/Bug?");
-                                break;
-                        }
-                        break;
+                                    controlDevices += cDevLine;
+                                    controlDevices += "\n";
+                                    dg.isWritten = true;
+                                    controlDeviceCount++;
+                                    break;
 
-                    case uF_IN:                                         //inport
-                        switch (dg.layer) 
-                        {
-                            case flow:                                  //flow inport
-                                flowInPorts += "flowInPort" + flowInPortCount + ",";
-                                dg.mintName = "flowInPort" + flowInPortCount;
+                                default:
+                                    System.out.println("unlayered gate! UCF/Bug?");
+                                    break;
+                            }
+                            break;
 
-                                dg.isWritten = true;
-                                flowInPortCount++;
-                                dg.bankCount = flowInPortCount;
-                                break;
+                        case uF_IN:                                         //inport
+                            switch (dg.layer) 
+                            {
+                                case flow:                                  //flow inport
+                                    flowInPorts += "flowInPort" + flowInPortCount + ",";
+                                    dg.mintName = "flowInPort" + flowInPortCount;
 
-                            case control:                               //control inport
-                                controlInPorts += "controlInPort" + controlInPortCount + ",";
-                                dg.mintName = "controlInPort" + controlInPortCount;
+                                    dg.isWritten = true;
+                                    flowInPortCount++;
+                                    dg.bankCount = flowInPortCount;
+                                    break;
 
-                                dg.isWritten = true;
-                                controlInPortCount++;
-                                dg.bankCount = controlInPortCount;
-                                break;
+                                case control:                               //control inport
+                                    controlInPorts += "controlInPort" + controlInPortCount + ",";
+                                    dg.mintName = "controlInPort" + controlInPortCount;
 
-                            default:
-                                System.out.println("unlayered gate! UCF/Bug?");
-                                break;
-                        }
-                        break;
+                                    dg.isWritten = true;
+                                    controlInPortCount++;
+                                    dg.bankCount = controlInPortCount;
+                                    break;
 
-                    case uF_OUT:
-                        switch (dg.layer) 
-                        {
-                            case flow:
-                                flowOutPorts += "outPort" + flowOutPortCount + ",";
-                                dg.mintName = "outPort" + flowOutPortCount;
+                                default:
+                                    System.out.println("unlayered gate! UCF/Bug?");
+                                    break;
+                            }
+                            break;
 
-                                dg.isWritten = true;
-                                flowOutPortCount++;
-                                break;
-                            case control:
-                                controlOutPorts += "outPort" + controlOutPortCount + ",";
-                                dg.mintName = "outPort" + controlOutPortCount;
+                        case uF_OUT:
+                            switch (dg.layer) 
+                            {
+                                case flow:
+                                    flowOutPorts += "outPort" + flowOutPortCount + ",";
+                                    dg.mintName = "outPort" + flowOutPortCount;
 
-                                dg.isWritten = true;
-                                controlOutPortCount++;
-                                break;
+                                    dg.isWritten = true;
+                                    flowOutPortCount++;
+                                    break;
+                                case control:
+                                    controlOutPorts += "outPort" + controlOutPortCount + ",";
+                                    dg.mintName = "outPort" + controlOutPortCount;
 
-                            default:
-                                System.out.println("unlayered gate! UCF/Bug?");
-                                break;
-                        }
-                        break;
+                                    dg.isWritten = true;
+                                    controlOutPortCount++;
+                                    break;
 
-                    default:
-                        System.out.println("Untyped gate! Netsynth bug?");
-                        break;
+                                default:
+                                    System.out.println("unlayered gate! UCF/Bug?");
+                                    break;
+                            }
+                            break;
+
+                        default:
+                            System.out.println("Untyped gate! Netsynth bug?");
+                            break;
+                    }
                 }
             }
-
             for (DWire dw : graph.wireGraph) 
             {
                 int currentInTerm;
@@ -169,7 +194,7 @@ public class CreateMint
                         case cinput:
                             //inTermsArray = dw.toGate.opInfo.getJSONArray("inputTerms");     //need to be catch all with if inTermsFlag
 
-                            currentInTerm = dw.toGate.get(0).opInfo.getInt("controlTerms");
+                            currentInTerm = dw.toGate.opInfo.getInt("controlTerms");
 
                             //these if/else for new up valves (to make sure that orientation is correct)
                             if (currentInTerm == 1) 
@@ -192,20 +217,30 @@ public class CreateMint
                             break;
 
                         case finput:
-                            if (dw.toGate.get(0).layer.equals(LayerType.control)) {
-                                currentInTerm = dw.toGate.get(0).opInfo.getInt("inputTerms");
-                            } 
+                            if (dw.toGate.isInputClone)
+                            {
+                                flowChannels += "CHANNEL flowchannel" + flowChannelCount + " from ";
+                                flowChannels += dw.fromGate.mintName + " " + "2" + " to ";
+                                flowChannels += dw.toGate.mintName + " " + dw.toGate.inTermVal + " w=" + channelWidth + ";\n";
+                                dw.toGate.inTermVal++;
+                                dw.isWritten = true;
+                                flowChannelCount++;
+                                break;
+                            }
+                            if (dw.toGate.layer.equals(LayerType.control)) {
+                                currentInTerm = dw.toGate.opInfo.getInt("inputTerms");
+                            }
                             else 
                             {
-                                inTermsArray = dw.toGate.get(0).opInfo.getJSONArray("inputTerms");
-                                currentInTerm = inTermsArray.getInt(dw.toGate.get(0).inTermInd);
-                                dw.toGate.get(0).inTermInd++;
+                                inTermsArray = dw.toGate.opInfo.getJSONArray("inputTerms");
+                                currentInTerm = inTermsArray.getInt(dw.toGate.inTermInd);
+                                dw.toGate.inTermInd++;
                             }
 
                             flowChannels += "CHANNEL flowChannel" + flowChannelCount + " from ";
                             flowChannels += dw.fromGate.mintName + " " + dw.fromGate.outTermVal + " to ";             //port way
-//                        flowChannels += "FBank" + " " + dw.fromGate.bankCount + " to ";                             //bank way
-                            flowChannels += dw.toGate.get(0).mintName + " " + currentInTerm + " w=" + channelWidth + ";\n";
+//                            flowChannels += "FBank" + " " + dw.fromGate.bankCount + " to ";                             //bank way
+                            flowChannels += dw.toGate.mintName + " " + currentInTerm + " w=" + channelWidth + ";\n";
                             dw.isWritten = true;
                             flowChannelCount++;
 
@@ -223,10 +258,20 @@ public class CreateMint
 
                             break;
 
-                        case foutput:       //need to for through toGate/merge/split wires
+                        case foutput:
                             currentInTerm = dw.toGate.inTermVal;
-                            currentOutTerm = dw.fromGate.opInfo.getInt("outputTerms");     //need to be catch all with outTermFlag, be done with JSON parsing by translation, store terms int object attribute?
-
+                            if (dw.fromGate.isInputClone)
+                            {
+                                flowChannels += "CHANNEL flowchannel" + flowChannelCount + " from ";
+                                flowChannels += dw.fromGate.mintName + " " + dw.fromGate.inTermVal + " to ";
+                                flowChannels += dw.toGate.mintName + " " + "4" + " w=" + channelWidth + ";\n";
+                                dw.toGate.outTermVal++;
+                                dw.isWritten = true;
+                                flowChannelCount++;
+                                currentOutTerm = dw.fromGate.outTermVal;
+                                break;
+                            }
+                            else currentOutTerm = dw.fromGate.opInfo.getInt("outputTerms");     //need to be catch all with outTermFlag, be done with JSON parsing by translation, store terms int object attribute?
                             flowChannels += "CHANNEL flowChannel" + flowChannelCount + " from ";
                             flowChannels += dw.fromGate.mintName + " " + currentOutTerm + " to ";
                             flowChannels += dw.toGate.mintName + " " + currentInTerm + " w=" + channelWidth + ";\n";
@@ -239,11 +284,32 @@ public class CreateMint
                             //to be inplemented
                             break;
 
-                        case fchannel:      //need to for through toGate
+                        case fchannel:      
+                            if (dw.toGate.isInputClone)
+                            {
+                                flowChannels += "CHANNEL flowchannel" + flowChannelCount + " from ";
+                                flowChannels += dw.fromGate.mintName + " " + "2" + " to ";
+                                flowChannels += dw.toGate.mintName + " " + dw.toGate.inTermVal + " w=" + channelWidth + ";\n";
+                                dw.toGate.inTermVal++;
+                                dw.isWritten = true;
+                                flowChannelCount++;
+                                break;
+                            }
+                            if (dw.fromGate.isInputClone)
+                            {
+                                flowChannels += "CHANNEL flowchannel" + flowChannelCount + " from ";
+                                flowChannels += dw.fromGate.mintName + " " + dw.fromGate.inTermVal + " to ";
+                                flowChannels += dw.toGate.mintName + " " + "4" + " w=" + channelWidth + ";\n";
+                                dw.toGate.outTermVal++;
+                                dw.isWritten = true;
+                                flowChannelCount++;
+                                break;
+                            }
                             if (dw.toGate.layer.equals(LayerType.control)) 
                             {
                                 currentInTerm = dw.toGate.opInfo.getInt("inputTerms");      //not permanent
-                            } else 
+                            } 
+                            else 
                             {
                                 inTermsArray = dw.toGate.opInfo.getJSONArray("inputTerms");
                                 currentInTerm = inTermsArray.getInt(dw.toGate.inTermInd);
@@ -314,30 +380,53 @@ public class CreateMint
         }
     }
     
-    public static <T> boolean inputMatchChecker(List<T> iG, List<T> oG)  //checking if input lists are the same
+    public void inputCloneFinder(List<DGate> gates) //checking if gates have input clones
     {
-        final Set<T> s1 = new HashSet<>(iG);        //makes list into sets to make order not matter
-        final Set<T> s2 = new HashSet<>(oG);
-        
-        return s1.equals(s2);                       //check if input lists are the same when order doesn't matter
-    }
-    
-    public void outputCloneFinder(List<DGate> gates) 
-    {
-        int outerGateCount = 0;
-        int innerGateCount = 0;
-        for (DGate outerGate : gates) 
-        {
-            for (DGate innerGate : gates.subList(outerGateCount+1,gates.size())) 
+        for (int outerGateCount = 0; outerGateCount < gates.size(); outerGateCount++) 
+        {    
+            for (int innerGateCount = outerGateCount+1; innerGateCount < gates.size(); innerGateCount++)
             {
-                if (inputMatchChecker(innerGate.input, outerGate.input))
-                {
-                    outerGate.inputClones.add(innerGate);
-                    innerGate.inputClones.add(outerGate);
-                }
-                innerGateCount++;               
+                System.out.println("outerGate Count: " + outerGateCount + " type: " + gates.get(outerGateCount).gtype);
+                System.out.println("innerGate Count: " + innerGateCount + " type: " + gates.get(innerGateCount).gtype);
+                if (inputMatchChecker(gates.get(innerGateCount), gates.get(outerGateCount)))
+                {   //add clones to eachother's list of input clones
+                    System.out.println("found clone!");
+                    gates.get(innerGateCount).inputClones.add(gates.get(outerGateCount));
+                    gates.get(outerGateCount).inputClones.add(gates.get(innerGateCount));
+                }                
             }
-            outerGateCount++;
         }
+    }
+
+    public boolean inputMatchChecker(DGate iG, DGate oG)  //checking if input lists are the same
+    {
+        if(iG.gtype == DGateType.uF && oG.gtype == DGateType.uF)    //weeding out
+        {
+            System.out.println("Both have uF gtype!");
+            System.out.println("innerGate Symbol: " + iG.symbol);
+            System.out.println("outerGate Symbol: " + oG.symbol);
+            if(iG.symbol.equals(oG.symbol))      //further weeding              
+            {
+                System.out.println("same symbol!");
+               if(iG.input.size() == oG.input.size())   //final weeding before "heavy" lifting
+               {
+                   List<String> iGInputList = new ArrayList<>();
+                   List<String> oGInputList = new ArrayList<>();
+                   
+                   for(int index = 0; index < iG.input.size(); index++) //adding input names to strings
+                   {
+                       iGInputList.add(iG.input.get(index).name);
+                       System.out.println("innerGate input name at index " + index + " is " + iG.input.get(index).name);
+                       oGInputList.add(oG.input.get(index).name); 
+                       System.out.println("outerGate input name at index " + index + " is " + oG.input.get(index).name);
+                   }
+                   Collections.sort(iGInputList);   //alphabetizing input names in lists
+                   Collections.sort(oGInputList);
+                   System.out.println("Checked input names!");
+                   return (iGInputList.equals(oGInputList));    //checking if the sorted names are equal
+               }
+            }
+        }
+        return false;
     }
 }
