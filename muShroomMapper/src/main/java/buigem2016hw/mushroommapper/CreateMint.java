@@ -85,8 +85,8 @@ public class CreateMint
                                     dg.isWritten = true;
                                     flowDeviceCount++;
 
-                                    if(dg.inputClones != null && !(dg.inputClones.isEmpty()))   //writing up MINT for splitting channels for inputClones
-                                    {
+                                    if(dg.inputClones != null && !(dg.inputClones.isEmpty()))   //if gate has input clones   
+                                    {//writing up MINT for splitting channels for inputClones
                                         flowDevices += "V TREE fDevice" + flowDeviceCount + "_" + "SplitTree " + dg.inputClones.size() + " to 1 spacing=" + 10*ucf.channelWidth + " flowChannelWidth=" + ucf.channelWidth;
                                         flowDevices += "\n";
                                         DGate treeGate = new DGate();
@@ -95,16 +95,18 @@ public class CreateMint
                                         treeGate.inTermVal = 1;
                                         treeGate.outTermVal = 2;    //need to increment this each time we reference it
                                         dg.output.fromGate = treeGate;
-                                        for (DGate clone:dg.inputClones)
+                                        for (DGate clone:dg.inputClones)    //for all the clones you have
                                         {
-                                            clone.output.fromGate = treeGate;
-                                            clone.isWritten = true;
+                                            clone.output.fromGate = treeGate;   //the fromGate is the same as mine
+                                            clone.isWritten = true; //marked as written to stop multiple trees?
                                         }
                                         flowDeviceCount++;
+                                        dg.input.get(0).toGate = dg;    //i shouldn't need this...
                                         DWire treeWire = new DWire();
                                         treeWire.toGate = treeGate;
                                         treeWire.fromGate = dg;
                                         treeWire.wtype = DWireType.fchannel;
+                                        graph.wireGraph.add(treeWire);
                                     }
                                     break;
 
@@ -262,8 +264,9 @@ public class CreateMint
                             currentInTerm = dw.toGate.inTermVal;
                             if (dw.fromGate.isInputClone)
                             {
+                                //if (dw.fromGate.outTermVal == 1) dw.fromGate.outTermVal = 2;    //output to tree is 2 or up
                                 flowChannels += "CHANNEL flowchannel" + flowChannelCount + " from ";
-                                flowChannels += dw.fromGate.mintName + " " + dw.fromGate.inTermVal + " to ";
+                                flowChannels += dw.fromGate.mintName + " " + dw.fromGate.outTermVal + " to ";
                                 flowChannels += dw.toGate.mintName + " " + "4" + " w=" + channelWidth + ";\n";
                                 dw.toGate.outTermVal++;
                                 dw.isWritten = true;
@@ -281,7 +284,7 @@ public class CreateMint
                             break;
 
                         case cchannel:
-                            //to be inplemented
+                            //to be implemented (do cchannels a really exist? current primitives/modules don't have any afaik)
                             break;
 
                         case fchannel:      
@@ -297,9 +300,10 @@ public class CreateMint
                             }
                             if (dw.fromGate.isInputClone)
                             {
+                                //if(dw.fromGate.inTermVal == 1) dw.fromGate.inTermVal = 2;
                                 flowChannels += "CHANNEL flowchannel" + flowChannelCount + " from ";
-                                flowChannels += dw.fromGate.mintName + " " + dw.fromGate.inTermVal + " to ";
-                                flowChannels += dw.toGate.mintName + " " + "4" + " w=" + channelWidth + ";\n";
+                                flowChannels += dw.fromGate.mintName + " " + dw.fromGate.outTermVal + " to ";
+                                flowChannels += dw.toGate.mintName + " " + dw.toGate.inTermVal + " w=" + channelWidth + ";\n";  //toGate.inTermVal _should_ be 4, but leaving it as its actualy Val just in case
                                 dw.toGate.outTermVal++;
                                 dw.isWritten = true;
                                 flowChannelCount++;
@@ -389,8 +393,13 @@ public class CreateMint
                 System.out.println("outerGate Count: " + outerGateCount + " type: " + gates.get(outerGateCount).gtype);
                 System.out.println("innerGate Count: " + innerGateCount + " type: " + gates.get(innerGateCount).gtype);
                 if (inputMatchChecker(gates.get(innerGateCount), gates.get(outerGateCount)))
-                {   //add clones to eachother's list of input clones
+                {   
                     System.out.println("found clone!");
+                    //add clones to eachother's list of input clones
+//                    if(gates.get(innerGateCount).inputClones.isEmpty())
+//                    {
+//                        gates.get(innerGateCount).fromGate = gates.get(outerGateCount).fromGate;
+//                    }
                     gates.get(innerGateCount).inputClones.add(gates.get(outerGateCount));
                     gates.get(outerGateCount).inputClones.add(gates.get(innerGateCount));
                 }                
@@ -408,7 +417,7 @@ public class CreateMint
             if(iG.symbol.equals(oG.symbol))      //further weeding              
             {
                 System.out.println("same symbol!");
-               if(iG.input.size() == oG.input.size())   //final weeding before "heavy" lifting
+               if(iG.input.size() == oG.input.size())   //final weeding before "heavy" lifting (checking if inputs match up)
                {
                    List<String> iGInputList = new ArrayList<>();
                    List<String> oGInputList = new ArrayList<>();
