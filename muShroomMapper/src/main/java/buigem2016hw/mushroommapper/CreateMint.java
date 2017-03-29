@@ -87,26 +87,32 @@ public class CreateMint
 
                                     if(dg.inputClones != null && !(dg.inputClones.isEmpty()))   //if gate has input clones   
                                     {//writing up MINT for splitting channels for inputClones
-                                        flowDevices += "V TREE fDevice" + flowDeviceCount + "_" + "SplitTree " + dg.inputClones.size() + " to 1 spacing=" + 10*ucf.channelWidth + " flowChannelWidth=" + ucf.channelWidth;
-                                        flowDevices += "\n";
-                                        DGate treeGate = new DGate();
+                                        flowDevices += "V TREE fDevice" + flowDeviceCount + "_" + "SplitTree 1 to ";
+                                        flowDevices += (dg.inputClones.size()+1) + " spacing=" + 10*ucf.channelWidth; 
+                                        //the spacing is dependent on channel size of input for now (10*channel size), can make more parametric later
+                                        flowDevices += " flowChannelWidth=" + ucf.channelWidth;  
+                                        flowDevices += ";\n";
+                                        
+                                        //creating tree for splitting output of inputClones
+                                        DGate treeGate = new DGate();   //treegate = tree made by splitting output
                                         treeGate.mintName = "fDevice" + flowDeviceCount + "_" + "SplitTree";
-                                        treeGate.isInputClone = true;
+                                        treeGate.isInputClone = true;   //need to link the treeGates together
                                         treeGate.inTermVal = 1;
                                         treeGate.outTermVal = 2;    //need to increment this each time we reference it
-                                        dg.output.fromGate = treeGate;
+                                        
+                                        dg.output.fromGate = treeGate;  //the outputs of this gate now come from the tree splitter
                                         for (DGate clone:dg.inputClones)    //for all the clones you have
                                         {
                                             clone.output.fromGate = treeGate;   //the fromGate is the same as mine
-                                            clone.isWritten = true; //marked as written to stop multiple trees?
+                                            clone.isWritten = true; //marked as written to stop multiple gate clones + treeGates
                                         }
                                         flowDeviceCount++;
                                         dg.input.get(0).toGate = dg;    //i shouldn't need this...
-                                        DWire treeWire = new DWire();
+                                        DWire treeWire = new DWire();   //wire connecting gate to treeGate (split tree)
                                         treeWire.toGate = treeGate;
                                         treeWire.fromGate = dg;
                                         treeWire.wtype = DWireType.fchannel;
-                                        graph.wireGraph.add(treeWire);
+                                        graph.wireGraph.add(treeWire);  //adding uF gate -> tree wire to wireGraph so it will be written later
                                     }
                                     break;
 
@@ -268,10 +274,10 @@ public class CreateMint
                                 flowChannels += "CHANNEL flowchannel" + flowChannelCount + " from ";
                                 flowChannels += dw.fromGate.mintName + " " + dw.fromGate.outTermVal + " to ";
                                 flowChannels += dw.toGate.mintName + " " + "4" + " w=" + channelWidth + ";\n";
-                                dw.toGate.outTermVal++;
+                                dw.fromGate.outTermVal++;
                                 dw.isWritten = true;
                                 flowChannelCount++;
-                                currentOutTerm = dw.fromGate.outTermVal;
+                                //currentOutTerm = dw.fromGate.outTermVal; //i dont think this is needed
                                 break;
                             }
                             else currentOutTerm = dw.fromGate.opInfo.getInt("outputTerms");     //need to be catch all with outTermFlag, be done with JSON parsing by translation, store terms int object attribute?
