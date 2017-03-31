@@ -32,6 +32,11 @@
             <artifactId>fluigi</artifactId>
             <version>0.2.2.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.cidarlab.fluigi</groupId>
+            <artifactId>Fluigi</artifactId>
+            <version>0.2</version>
+        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
