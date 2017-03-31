@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package buigem2016hw.mushroommapper;
+//package buigem2016hw.mushroommapper;
 /*
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.layout.mxCompactTreeLayout;
@@ -15,13 +15,13 @@ import org.jgrapht.DirectedGraph;
 import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DefaultEdge;
 */
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Image;
-import java.util.Hashtable;
-import javax.swing.JApplet;
-import javax.swing.JFrame;
-import static javax.swing.SwingConstants.*;
+//import java.awt.Color;
+//import java.awt.Dimension;
+//import java.awt.Image;
+//import java.util.Hashtable;
+//import javax.swing.JApplet;
+//import javax.swing.JFrame;
+//import static javax.swing.SwingConstants.*;
 
 /**
  *
@@ -30,7 +30,7 @@ import static javax.swing.SwingConstants.*;
 
 //To do: Will this work with the Fluigi flow GUI?
 //Commenting out for now. Removing JGraphX/T
-public class Visualization extends JApplet{
+//public class Visualization extends JApplet{
     // 
     /*
     private static final Color DEFAULT_BG_COLOR = Color.decode("#FAFBFF");
