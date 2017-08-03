@@ -26,16 +26,24 @@ public class Main
 {
     private static String lfrFilePath = null;
     private static String ucfFilePath = null;
+    public static String outputPath = null;
 
     private static Options createCommandLineOptions() 
     {
         final Options options = new Options();
-        options.addOption("l", "lfr", true, "give lfr filepath (.v)");
+        //options.addOption("l", "lfr", true, "give lfr filepath (.v)");
         options.addOption("u", "ucf", true, "give ucf filepath (.json)");
+        options.addOption("h", "help", false, "Show help information.");
 
         return options;
     }
-
+    
+    private static void outputCommandLineHelp(final Options options) 
+    {
+        final HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("mm <lfr filename> [-u <ucf>] [-o output directory]", options);
+        System.exit(0);
+    }
     private static void processCommandLine(final CommandLine cl, Options options) {
 
         if ((null != cl) && cl.hasOption("lfr")) 
